@@ -46,6 +46,7 @@
             width: 36px;
             height: 36px;
             font-size: 15px;
+            cursor: pointer;
             filter: invert(1);
             overflow: hidden;
             img{
@@ -149,6 +150,7 @@
                 flex-direction: column;
                 position: relative;
                 padding-right: 45px;
+                cursor: pointer;
 
                 h1 {
                     font-size: 15px;
@@ -190,6 +192,58 @@
             right: -200px;
             opacity: 0;
             display: none;
+        }
+    }
+
+    .popup{
+        position: absolute;
+        height: 200px;
+        overflow: hidden;
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        right: 0;
+        top: 65px;
+        padding: 5px;
+        border-radius: 9px;
+        background-color: var(--app-container);
+        box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.05);
+
+        .nav_item{
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            height: 50px;
+            padding: 10px;
+            border-bottom: 1px solid #dbdfeb;
+
+            .user{
+                display: flex;
+                flex-direction: column;
+                line-height: 90%;
+
+                h1{
+                    font-size: 15px;
+                }
+                p{
+                    font-size: 12px;
+                }
+            }
+            img{
+                height: 35px;
+            }
+            .icon_links{
+                text-decoration: none;
+                color: var(--main-color);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                svg{
+                    height: 20px;
+                    width: 20px;
+                }
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import Navbar from "./Components/Navbar/Navbar";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import Admin_Dashboard from "./Pages/Dashboard/Admin/Admin_Dashboard";
 import Products from "./Pages/Inventory/Products";
+import Login from "./Pages/Login/Login";
 const App = () => {
   return (
     <>
@@ -27,7 +28,8 @@ const App = () => {
 
 const AppContent = () => {
   const dispatch = useDispatch();
-
+  const location = useLocation();
+  const isLoginRoute = ["/login", "/signin", '/reset', '/comfirm'].includes(location.pathname);
   let { access_token } = getToken();
   useEffect(() => {
     dispatch(setUserToken({ access_token: access_token }));
@@ -37,13 +39,14 @@ const AppContent = () => {
   return (
     <>
       <Toaster />
-      <Navbar bar={setSidebar} active={sidebar} />
+      {!isLoginRoute && <Navbar bar={setSidebar} active={sidebar} />}
       <section className="main_container">
-        <Sidebar active={sidebar} />
+        {!isLoginRoute && <Sidebar active={sidebar} />}
         <div className="main_dashboard_wrapper">
           <Routes>
             <Route index element={<Admin_Dashboard/>} />
             <Route path="products" element={<Products/>} />
+            <Route path="login" element={<Login/>}/>
             <Route path="*" element={<h1>Error 404 Page not found !!</h1>} />
           </Routes>
         </div>
