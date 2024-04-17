@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
-function App() {
-  const [count, setCount] = useState(0)
-
+import React, { useEffect, lazy, Suspense, useState } from "react";
+import "./App.scss";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Navigate,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { Toaster } from "sonner";
+import { setUserToken } from "./Fetch_Api/Feature/authSlice";
+import { useDispatch } from "react-redux";
+import { getToken } from "./Fetch_Api/Service/LocalStorageServices";
+import Navbar from "./Components/Navbar/Navbar";
+import Sidebar from "./Components/Sidebar/Sidebar";
+import Admin_Dashboard from "./Pages/Dashboard/Admin/Admin_Dashboard";
+import Products from "./Pages/Inventory/Products";
+const App = () => {
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Router>
+        <AppContent />
+      </Router>
     </>
-  )
-}
+  );
+};
 
-export default App
+const AppContent = () => {
+  const dispatch = useDispatch();
+
+  let { access_token } = getToken();
+  useEffect(() => {
+    dispatch(setUserToken({ access_token: access_token }));
+  }, [access_token, dispatch]);
+
+  const [sidebar, setSidebar] = useState(false);
+  return (
+    <>
+      <Toaster />
+      <Navbar bar={setSidebar} active={sidebar} />
+      <section className="main_container">
+        <Sidebar active={sidebar} />
+        <div className="main_dashboard_wrapper">
+          <Routes>
+            <Route index element={<Admin_Dashboard/>} />
+            <Route path="products" element={<Products/>} />
+            <Route path="*" element={<h1>Error 404 Page not found !!</h1>} />
+          </Routes>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default App;

@@ -1,0 +1,196 @@
+.navbar {
+    height: 65px;
+    width: 100vw;
+    display: flex;
+    border-bottom: 1px solid #dbe0e6;
+    position: relative;
+
+    .sidebar_button{
+        display: none;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 5px;
+        position: absolute;
+        @media (max-width:990px) {
+            display: flex;
+        }
+    }
+
+    .left_logo {
+        width: 260px;
+        min-width: 260px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 0 0 20px;
+        border-right: 1px solid #dbe0e6;
+        transition: .5s ease-in-out;
+        img{
+            height: 50%;
+            filter: invert(1);
+        }
+        .profile_image_mini{
+            display: flex;
+            align-items: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            justify-content: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            position: absolute;
+            right: 10px;
+            background: #111111;
+            border-radius: 6px;
+            border: 1px solid #121212;
+            width: 36px;
+            height: 36px;
+            font-size: 15px;
+            filter: invert(1);
+            overflow: hidden;
+            img{
+                height: 100%;
+
+            }
+            @media (min-width:990px) {
+                display: none;
+            }
+        }
+        @media (max-width:990px) {
+            width: 100%;
+            justify-content: center;
+            padding: 0;
+        }
+
+    }
+
+    .right_component {
+        width: 85%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: 1.5s ease;
+
+        .searchbar {
+            height: 100%;
+            align-items: center;
+            display: flex;
+            padding: 0 10px 0 25px;
+
+            input {
+                overflow: none;
+                border: none;
+                width: 300px;
+                height: 36px;
+                background: #f3f6f9;
+                padding: 0 16px;
+                border-radius: 8px;
+                outline: none;
+            }
+
+        }
+
+        .profile_settings {
+            height: 100%;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: end;
+            @media (max-width:1200px) {
+                gap: 10px;
+            }
+            .profile_image{
+                overflow: hidden;
+                border: 1px solid #dbe0e6;
+                img{
+                    height: 100%;
+                }
+            }
+            .nav_item {
+                display: flex;
+                align-items: center;
+                -webkit-box-align: center;
+                -ms-flex-align: center;
+                justify-content: center;
+                -webkit-justify-content: center;
+                -ms-flex-pack: center;
+                background: #f3f6f9;
+                border-radius: 6px;
+                width: 36px;
+                height: 36px;
+                font-size: 15px;
+                cursor: pointer;
+                position: relative;
+                .icon_links{
+                    display: flex;
+                    align-items: center;
+                }
+                &:hover {
+                    a{
+                        color: #ff9f43;
+                    }
+                }
+                
+                a {
+                    color: #67748E;
+                    svg {
+                        width: 18px;
+                    }
+                }
+
+            }
+
+            .profile {
+                height: 100%;
+                justify-content: center;
+                align-items: start;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                padding-right: 45px;
+
+                h1 {
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: #1b2950;
+                    display: flex;
+                    align-items: center;
+                }
+
+                h2 {
+                    display: block;
+                    color: #67748e;
+                    font-size: 12px;
+                }
+                @media (max-width:1200px) {
+                    h1,h2{
+                        display: none;
+                    }
+                }
+                &::after{
+                    content: "";
+                    width: 8px;
+                    height: 8px;
+                    border-top: 0;
+                    border-left: 0;
+                    border-right: 2px solid #1b2950;
+                    border-bottom: 2px solid #1b2950;
+                    border-radius: 1px;
+                    transform: rotate(45deg);
+                    transition: all 0.5s;
+                    top: 25px;
+                    position: absolute;
+                    right: 30px;
+                }
+            }
+        }
+        @media (max-width:990px) {
+            position: relative;
+            right: -200px;
+            opacity: 0;
+            display: none;
+        }
+    }
+
+}
