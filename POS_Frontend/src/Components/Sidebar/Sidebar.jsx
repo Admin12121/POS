@@ -1,13 +1,18 @@
 import React from "react";
 import style from "./style.module.scss";
 import { Link } from "react-router-dom";
-const Sidebar = ({active}) => {
+const Sidebar = ({ active }) => {
   return (
     <>
-      <div className={`${style.sidebar_wrapper}`} id={`${active ? style.mini_mini: ""}`}>
+      <div
+        className={`${style.sidebar_wrapper}`}
+        id={`${active ? style.mini_mini : ""}`}
+      >
         <div className={style.sidebar_menu}>
           <div className={style.subment_wrapper}>
-            <Link to="/" className={style.main_panal}>Dashboard</Link>
+            <Link to="/" className={style.main_panal}>
+              Dashboard
+            </Link>
           </div>
           <div className={style.subment_wrapper}>
             <h6>Inventory</h6>
@@ -64,7 +69,7 @@ const Sidebar = ({active}) => {
             </span>
           </div>
           <div className={style.subment_wrapper}>
-          <h6>Purchases</h6>
+            <h6>Purchases</h6>
             <span className={style.model}>
               <Link className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Purchase </span>
@@ -78,7 +83,7 @@ const Sidebar = ({active}) => {
             </span>
           </div>
           <div className={style.subment_wrapper}>
-          <h6>Finance & Accounts</h6>
+            <h6>Finance & Accounts</h6>
             <span className={style.model}>
               <Link className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Expenses </span>
@@ -86,7 +91,7 @@ const Sidebar = ({active}) => {
             </span>
           </div>
           <div className={style.subment_wrapper}>
-          <h6>People</h6>
+            <h6>People</h6>
             <span className={style.model}>
               <Link className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Customer </span>
@@ -97,9 +102,9 @@ const Sidebar = ({active}) => {
             </span>
           </div>
           <div className={style.subment_wrapper}>
-          <h6>HRM</h6>
+            <h6>HRM</h6>
             <span className={style.model}>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/employee" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Employees </span>
               </Link>
               <Link className={style.sidebar_main_link}>
