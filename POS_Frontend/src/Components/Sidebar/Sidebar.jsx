@@ -15,13 +15,13 @@ const Sidebar = ({active}) => {
               <Link to="/products" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Products </span>
               </Link>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/create_product" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Create Products </span>
               </Link>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/expired_product" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Expired Products </span>
               </Link>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/category" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Category</span>
               </Link>
               <Link className={style.sidebar_main_link}>

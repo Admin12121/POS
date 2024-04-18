@@ -86,6 +86,21 @@ class ProductsView(APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]
 
+    def post(self, request, format=None):
+        store = request.data.get('store_id')
+
+        try:
+            store = Store.objects.get(store_code = store)
+        except Store.DoesNotExist:
+            return Response({'error':'Store does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = ProductsSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+           serializer.save(store_code = store)
+           return Response({'msg':'Product Saved'}, status=status.HTTP_200_OK)
+        else: 
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def get(self, request, format=None):
           name = request.query_params.get('name')
           store_code = request.query_params.get('store')
@@ -105,4 +120,5 @@ class ProductsView(APIView):
               category = Category.objects.none()
           serializer = CategorySerializer(category, many=True)
           return Response(serializer.data, status=status.HTTP_200_OK)
+    
 

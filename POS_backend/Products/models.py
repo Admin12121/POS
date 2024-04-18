@@ -7,6 +7,7 @@ from django.core.validators import FileExtensionValidator
 
 class Category(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     category = models.CharField(max_length=200, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField()
@@ -15,6 +16,7 @@ class Category(models.Model):
         return self.category
 
 class SubCategory(models.Model):
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     subcategory = models.CharField(max_length=200, null=True)
     categorycode = models.CharField(max_length=20, null=True)
@@ -24,6 +26,7 @@ class SubCategory(models.Model):
         return self.category
 
 class Brand(models.Model):
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     brand = models.CharField(max_length=100, null=True)
     logo = models.ImageField(upload_to='profile/', null=True, blank=True,validators=[ FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])] )
     status = models.BooleanField()
@@ -38,6 +41,7 @@ class Products(models.Model):
         ('Kg','Kg'),
         ('Pc', 'Pc'),
     )
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     product_name = models.CharField(max_length=500, blank=True)
     slug = models.CharField(max_length=100, blank=True)
     sku = models.CharField(max_length=100, blank=True)

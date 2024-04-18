@@ -19,6 +19,7 @@ class Sales(models.Model):
       return f"{self.costumer_name} - {self.status} - {self.biller}"
     
 class SalesReturn(models.Model):
+     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True)
      product_name = models.ForeignKey(Products, null=True , on_delete=models.SET_DEFAULT, default=None)
      date = models.DateTimeField(auto_now_add=True)
      customer = models.ForeignKey(Customers, on_delete=models.SET_DEFAULT, default=None)

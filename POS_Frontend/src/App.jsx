@@ -15,7 +15,11 @@ import Navbar from "./Components/Navbar/Navbar";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import Admin_Dashboard from "./Pages/Dashboard/Admin/Admin_Dashboard";
 import Products from "./Pages/Inventory/Products";
-import Login from "./Pages/Login/Login";
+import CreateProduct from "./Pages/Inventory/CreateProduct";
+import EpiredProducts from "./Pages/Inventory/EpiredProducts";
+import Loader from "./Components/Loader/Loader";
+import Category from "./Pages/Inventory/Category";
+
 const App = () => {
   return (
     <>
@@ -27,6 +31,11 @@ const App = () => {
 };
 
 const AppContent = () => {
+
+  const Login = lazy(() => import('./Pages/Login/Login'));
+  const Signin = lazy(() => import('./Pages/Login/Signin'));
+
+
   const dispatch = useDispatch();
   const location = useLocation();
   const isLoginRoute = ["/login", "/signin", '/reset', '/comfirm'].includes(location.pathname);
@@ -46,7 +55,11 @@ const AppContent = () => {
           <Routes>
             <Route index element={<Admin_Dashboard/>} />
             <Route path="products" element={<Products/>} />
-            <Route path="login" element={<Login/>}/>
+            <Route path="create_product" element={<CreateProduct/>} />
+            <Route path="expired_product" element={<EpiredProducts/>} />
+            <Route path="category" element={<Category/>} />
+            <Route path="login" element={<Suspense fallback={<Loader/>}><Login /></Suspense>}/>
+            <Route path="signin" element={<Suspense fallback={<Loader/>}><Signin /></Suspense>}/>
             <Route path="*" element={<h1>Error 404 Page not found !!</h1>} />
           </Routes>
         </div>
