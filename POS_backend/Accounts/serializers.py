@@ -8,11 +8,52 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.conf import settings
 from .utils import Util
 from .models import *
-from Stotes.models import Store
-from django.contrib.auth.models import Group 
-
+from Stotes.models import Store , Group
 #User
 class UserRegistrationSerializer(serializers.ModelSerializer):
+  password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
+  stor_code = serializers.CharField(write_only=True)
+  class Meta:
+    model = User
+    fields=['email', 'first_name', 'last_name', 'stor_code', 'phone', 'dob', 'gender', 'employee_role', 'password', 'password2']
+    extra_kwargs={
+      'password':{'write_only':True}
+    }
+
+  # Validating Password and Confirm Password while Registration
+  def validate(self, attrs):
+    password = attrs.get('password')
+    password2 = attrs.get('password2')
+    if password != password2:
+      raise serializers.ValidationError("Password and Confirm Password doesn't match")
+    stor_code = attrs.get('stor_code')
+    if not Group.objects.filter(code = stor_code).exists():
+       raise serializers.ValidationError("Store is not Registered")
+    return attrs
+    
+  
+  #Email validator
+  def validate_email(self, value):
+        """
+        Validate that the email is not already in use.
+        """
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email address is already in use.")
+        return value
+   
+
+  def create(self, validate_data):
+    code = validate_data.pop('stor_code')
+    group = Group.objects.get(code = code)
+    user =  User.objects.create_user(**validate_data)
+    user.is_active = False
+    user.stor = group
+    user.save()
+    # default_group = Group.objects.get(name='default')
+    # user.groups.add(default_group)
+    return user
+
+class AdminRegistrationSerializer(serializers.ModelSerializer):
   password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
   class Meta:
     model = User
@@ -40,7 +81,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
    
 
   def create(self, validate_data):
-    user =  User.objects.create_user(**validate_data)
+    user =  User.objects.create_superuser(**validate_data)
+    user.is_superuser=True
     user.is_active = False
     user.save()
     # default_group = Group.objects.get(name='default')
@@ -63,8 +105,7 @@ class UserDataSerializer(serializers.ModelSerializer):
               return None
       class Meta:
         model = User
-        fields = "__all__"
-        # exclude = ['password']
+        exclude = ['password']
 
 class UserChangePasswordSerializer(serializers.Serializer):
   password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)

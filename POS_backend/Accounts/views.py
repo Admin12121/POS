@@ -5,6 +5,7 @@ from .serializers import *
 from django.contrib.auth import authenticate
 from .renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework.decorators import permission_classes
 from django.utils.encoding import force_bytes, force_str
@@ -24,16 +25,15 @@ def get_tokens_for_user(user):
       'access': str(refresh.access_token),
   }
 
-class UserRegistrationView(APIView):
+class AdminRegistrationView(APIView):
   renderer_classes = [UserRenderer]
   def post(self, request, format=None):
-    serializer = UserRegistrationSerializer(data=request.data)
+    serializer = AdminRegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     myuser = serializer.save()
-
     # Welcome Email
     subject = "Welcome to genzcoder !!"
-    message = "Hello " + myuser.name + "!! \n" + "Thank you for signing up for genzcoder\n. please verify your email addresh to active your accout that we have sent \n\n  Getting Start on genzcoder \n\n Ready to get coding? Here are a few links to help you!  \n    Quick overview of what youcan do with genzcoder \n     Take a guide tour through the pen editor \n\nThanking You\n Need help with anything ? Hit up support. "        
+    message = "Hello " + myuser.first_name + "!! \n" + "Thank you for signing up for genzcoder\n. please verify your email addresh to active your accout that we have sent \n\n  Getting Start on genzcoder \n\n Ready to get coding? Here are a few links to help you!  \n    Quick overview of what youcan do with genzcoder \n     Take a guide tour through the pen editor \n\nThanking You\n Need help with anything ? Hit up support. "        
     from_email = settings.EMAIL_HOST_USER
     to_list = [myuser.email]
     send_mail(subject, message, from_email, to_list, fail_silently=True)
@@ -42,7 +42,40 @@ class UserRegistrationView(APIView):
     email_subject = "Confirm your email addresh !!"
     message2 = render_to_string('email_confirmation.html',{
         
-        'name': myuser.name,
+        'name': myuser.first_name,
+        'domain': 'localhost:3000',
+        'uid': urlsafe_base64_encode(force_bytes(myuser.pk)),
+        'token': generate_token.make_token(myuser)
+    })
+    email = EmailMessage(
+    email_subject,
+    message2,
+    settings.EMAIL_HOST_USER,
+    [myuser.email],
+    )
+    email.fail_silently = True
+    email.send()
+    
+    return Response({'msg':'Registration Successful, Check your Email to Verify Your Account'}, status=status.HTTP_201_CREATED)
+
+class UserRegistrationView(APIView):
+  renderer_classes = [UserRenderer]
+  def post(self, request, format=None):
+    serializer = UserRegistrationSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    myuser = serializer.save()
+    # Welcome Email
+    subject = "Welcome to genzcoder !!"
+    message = "Hello " + myuser.first_name + "!! \n" + "Thank you for signing up for genzcoder\n. please verify your email addresh to active your accout that we have sent \n\n  Getting Start on genzcoder \n\n Ready to get coding? Here are a few links to help you!  \n    Quick overview of what youcan do with genzcoder \n     Take a guide tour through the pen editor \n\nThanking You\n Need help with anything ? Hit up support. "        
+    from_email = settings.EMAIL_HOST_USER
+    to_list = [myuser.email]
+    send_mail(subject, message, from_email, to_list, fail_silently=True)
+    
+    # Email Address Confirmation Email
+    email_subject = "Confirm your email addresh !!"
+    message2 = render_to_string('email_confirmation.html',{
+        
+        'name': myuser.first_name,
         'domain': 'localhost:3000',
         'uid': urlsafe_base64_encode(force_bytes(myuser.pk)),
         'token': generate_token.make_token(myuser)
@@ -135,5 +168,18 @@ class AllUsersView(APIView):
             users = User.objects.none()
          serializer = UserDataSerializer(users, many=True)
          return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UserProfileView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, format=None):
+         user = request.user
+         
+         if user:
+            serializer = UserDataSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+         else:
+            return Response({"detail": "Some thing went wrong user does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
     

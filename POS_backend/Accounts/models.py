@@ -10,7 +10,7 @@ def generate_random_code():
      return random.randint(10000, 99999)
 
 class UserManager(BaseUserManager):
-     def create_user(self, email, name, first_name, last_name, phone, password=None, **extra_fields):
+     def create_user(self, email, first_name, last_name, phone, password=None, password2=None, stor_code=None, **extra_fields):
          """
          Creates and saves a User with the given email, name, and password.
          """
@@ -19,7 +19,6 @@ class UserManager(BaseUserManager):
 
          user = self.model(
              email=self.normalize_email(email),
-             name=name,
              first_name=first_name,
              last_name=last_name,
              phone=phone,
@@ -29,7 +28,7 @@ class UserManager(BaseUserManager):
          user.save(using=self._db)
          return user
 
-     def create_superuser(self, email, name, first_name, last_name, phone, password=None, **extra_fields):
+     def create_superuser(self, email, first_name, last_name, phone, password=None, password2=None, **extra_fields):
          """
          Creates and saves a superuser with the given email, name, and password.
          """
@@ -38,7 +37,7 @@ class UserManager(BaseUserManager):
 
          if extra_fields.get('is_superuser') is not True:
              raise ValueError('Superuser must have is_superuser=True.')
-         return self.create_user(email, name, first_name, last_name, phone, password, **extra_fields)
+         return self.create_user(email,  first_name, last_name, phone, password, **extra_fields)
 
 class User(AbstractBaseUser):
      email = models.EmailField(
@@ -88,7 +87,7 @@ class User(AbstractBaseUser):
 
      objects = UserManager()
      USERNAME_FIELD = 'email'
-     REQUIRED_FIELDS = ['name','first_name','last_name','phone']
+     REQUIRED_FIELDS = ['first_name','last_name','phone']
 
      def __str__(self):
              return self.email

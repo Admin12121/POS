@@ -19,15 +19,4 @@ const removeToken = () => {
   secureLocalStorage.removeItem("refresh_token");
 };
 
-const storeMode = (value) => {
-  if (value !== null && value !== undefined) {
-    localStorage.setItem("mode", value); // Store the value directly
-  }
-};
-
-const getMode = () => {
-  let mode = localStorage.getItem("mode");
-  return mode; // Return the value directly, not as an object
-};
-
-export { storeToken, getToken, removeToken, storeMode, getMode };
+export { storeToken, getToken, removeToken };

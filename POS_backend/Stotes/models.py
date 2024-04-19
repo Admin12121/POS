@@ -12,7 +12,7 @@ def generate_random_code():
 
 
 class Group(BaseGroup):
-    code = models.CharField(max_length=20, null=True, blank=True)
+    code = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Group'

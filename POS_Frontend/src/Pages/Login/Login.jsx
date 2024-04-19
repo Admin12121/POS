@@ -1,37 +1,92 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import "./style.scss";
-import {Link} from "react-router-dom"
-
+import { useNavigate,Link } from "react-router-dom";
+import { setUserToken } from "../../Fetch_Api/Feature/authSlice";
+import {
+  getToken, 
+  storeToken,
+} from "../../Fetch_Api/Service/LocalStorageServices";
+import { useLoginUserMutation } from "../../Fetch_Api/Service/User_Auth_Api";
+import {toast } from 'sonner';
 const Login = () => {
+  const [server_error, setServerError] = useState({});
+  const navigate = useNavigate();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // Check if server_error is not empty and it has at least one key
+    if (Object.keys(server_error).length > 0) {
+      // Get the first key from the server_error object
+      const errorKey = Object.keys(server_error)[0];
+
+      // Check if the errorKey exists in server_error and it has at least one message
+      if (server_error[errorKey] && server_error[errorKey].length > 0) {
+        const errorMessage = server_error[errorKey][0];
+
+        // Display the toast notification
+        toast.error(errorMessage, {
+          action: {
+            label: 'X',
+            onClick: () => toast.dismiss(),
+          },} );
+      }
+    }
+  }, [server_error]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const actualData = {
+      email: data.get("email"),
+      password: data.get("password"),
+    };
+    const res = await loginUser(actualData);
+    if (res.error) {
+      setServerError(res.error.data.errors);
+    }
+    if (res.data) {
+      storeToken(res.data.token);
+      let { access_token } = getToken();
+      dispatch(setUserToken({ access_token: access_token }));
+      toast.success(res.data.msg, {
+        action: {
+          label: 'X',
+          onClick: () => toast.dismiss(),
+        },} );
+      redirect()
+    }
+  };
+  function redirect() {
+    navigate('/')
+  }
   return (
     <div className="Login_wrapper">
       <div className="image_wrapper">
         <div className="overlay">
           <div className="main_over"></div>
           <img src="1.jpg" alt="" />
-          <div class="carousel-caption">
-              <div class="top-bar"></div>
+          <div className="carousel-caption">
+              <div className="top-bar"></div>
               <h5>Get the most from RestroNepal</h5>
               <p>Exciting product updates coming this fall.</p>
                 <a href="">Learn More</a>
           </div>
         </div>
-          <div class="auth-footer">
-              <div class="footer-top-bar"></div>
-              <p>Powered by <a href="www.kantipurinfotech.com" class="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
+          <div className="auth-footer">
+              <div className="footer-top-bar"></div>
+              <p>Powered by <a href="www.kantipurinfotech.com" className="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
           </div>
       </div>
       <div className="login_wrapper">
-        <form className="form">
+        <form action="#" className="form" onSubmit={handleSubmit}>
           <span className="Logo">
             <img src="https://kantipurinfotech.com/wp-content/themes/kantipurinfotech/assets/images/kit-logo.svg" alt="" />
           <p className="p"> Login to your account</p>
-          <p className="p">Please put your login credentials below</p>
           </span>
           <div className="flex-column">
             <label>Email </label>
           </div>
-          <div className="inputForm">
+          <div className="inputForm" style={{border: `${ server_error.non_field_errors || server_error.email ? "1px solid Red" :""}`}}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -46,13 +101,14 @@ const Login = () => {
               placeholder="Enter your Email"
               className="input"
               type="text"
+              name="email"
             />
           </div>
 
           <div className="flex-column">
             <label>Password </label>
           </div>
-          <div className="inputForm">
+          <div className="inputForm" style={{border: `${ server_error.non_field_errors || server_error.password ? "1px solid Red" :""}`}}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -66,26 +122,27 @@ const Login = () => {
               placeholder="Enter your Password"
               className="input"
               type="password"
+              name="password"
             />
           </div>
 
           <div className="flex-row">
-            <div class="content">
-              <label class="checkBox">
+            <div className="content">
+              <label className="checkBox">
                 <input id="ch1" type="checkbox" />
-                <div class="transition"></div>
+                <div className="transition"></div>
               </label>
               <label>Remember me </label>
             </div>
-            <span className="span">Forgot password?</span>
+            <Link to="" className="span">Forgot password?</Link>
           </div>
           <button className="button-submit">Sign In</button>
           <p className="p line">Or With</p>
-          <div class="flex-row">
-            <button class="btn apple">Phone Number</button>
-            <button class="btn google">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="-0.5 0 48 48" version="1.1">
-                <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <div className="flex-row">
+            <button className="btn apple">Phone Number</button>
+            <button className="btn google">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="-0.5 0 48 48" version="1.1">
+                <g id="Icons" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                     <g id="Color-" transform="translate(-401.000000, -860.000000)">
                         <g id="Google" transform="translate(401.000000, 860.000000)">
                             <path d="M9.82727273,24 C9.82727273,22.4757333 10.0804318,21.0144 10.5322727,19.6437333 L2.62345455,13.6042667 C1.08206818,16.7338667 0.213636364,20.2602667 0.213636364,24 C0.213636364,27.7365333 1.081,31.2608 2.62025,34.3882667 L10.5247955,28.3370667 C10.0772273,26.9728 9.82727273,25.5168 9.82727273,24" id="Fill-1" fill="#FBBC05"></path>
@@ -103,8 +160,8 @@ const Login = () => {
             Don't have an account? <Link to="/signin" className="span">Sign Up</Link>
           </p>
         </form>
-        <div class="auth-footer">
-              <p>Powered by <a href="www.kantipurinfotech.com" class="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
+        <div className="auth-footer">
+              <p>Powered by <a href="www.kantipurinfotech.com" className="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
           </div>
       </div>
     </div>

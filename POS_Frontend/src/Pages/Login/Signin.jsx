@@ -1,7 +1,57 @@
-import React from 'react'
+import React,{useState, useEffect} from "react";
+import { useRegisterAdminMutation } from '../../Fetch_Api/Service/User_Auth_Api'
+import {toast } from 'sonner';
+import { useNavigate, Link } from 'react-router-dom';
 import "./style.scss";
-import {Link} from "react-router-dom"
 const Signin = () => {
+  const [server_error, setServerError] = useState({});
+  const navigate = useNavigate();
+  const [registerUser, { isLoading }] = useRegisterAdminMutation();
+  useEffect(() => {
+    // Check if server_error is not empty and it has at least one key
+    if (Object.keys(server_error).length > 0) {
+      // Get the first key from the server_error object
+      const errorKey = Object.keys(server_error)[0];
+
+      // Check if the errorKey exists in server_error and it has at least one message
+      if (server_error[errorKey] && server_error[errorKey].length > 0) {
+        const errorMessage = server_error[errorKey][0];
+
+        // Display the toast notification
+        toast.error(errorMessage, {
+          action: {
+            label: 'X',
+            onClick: () => toast.dismiss(),
+          },}  );
+      }
+    }
+  }, [server_error]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const actualData = {
+      first_name: data.get("first_name"),
+      last_name: data.get("last_name"),
+      email: data.get("email"),
+      phone: data.get("phone"),
+      password: data.get("password"),
+      password2: data.get("password2"),
+      // tc: data.get("tc"),
+    };
+    const res = await registerUser(actualData);
+    if (res.error) {
+      setServerError(res.error.data.errors);
+    }
+    if (res.data) {
+      toast.success(res.data.msg, {
+        action: {
+          label: 'X',
+          onClick: () => toast.dismiss(),
+        },} );
+      navigate("/");
+    }
+  };
   return (
     <div className="Login_wrapper">
       <div className="image_wrapper">
@@ -21,16 +71,15 @@ const Signin = () => {
           </div>
       </div>
       <div className="login_wrapper">
-        <form className="form">
+        <form className="form" onSubmit={handleSubmit}>
           <span className="Logo">
             <img src="https://kantipurinfotech.com/wp-content/themes/kantipurinfotech/assets/images/kit-logo.svg" alt="" />
           <p className="p"> Register to Your Account</p>
-          <p className="p">Please put your details to register your account.</p>
           </span>
           <div className="flex-row">
             <div className="flex-column" style={{width:"47%"}}>
               <label>First Name </label>
-            <div className="inputForm">
+            <div className="inputForm" style={{border: `${ server_error.non_field_errors ? "1px solid Red" :""}`}}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -42,15 +91,16 @@ const Signin = () => {
                 </g>
               </svg>
               <input
-                placeholder="Enter your Email"
+                placeholder="First Name"
                 className="input"
+                name="first_name"
                 type="text"
               />
             </div>
             </div>
             <div className="flex-column" style={{width:"47%"}} >
               <label>Last Name </label>
-            <div className="inputForm">
+            <div className="inputForm" style={{border: `${ server_error.non_field_errors ? "1px solid Red" :""}`}}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -62,8 +112,9 @@ const Signin = () => {
                 </g>
               </svg>
               <input
-                placeholder="Enter your Email"
+                placeholder="Last Name"
                 className="input"
+                name="last_name"
                 type="text"
               />
             </div>
@@ -72,7 +123,7 @@ const Signin = () => {
           <div className="flex-column">
             <label>Email </label>
           </div>
-          <div className="inputForm">
+          <div className="inputForm" style={{border: `${ server_error.non_field_errors || server_error.email ? "1px solid Red" :""}`}}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -86,13 +137,14 @@ const Signin = () => {
             <input
               placeholder="Enter your Email"
               className="input"
+              name="email"
               type="text"
             />
           </div>
           <div className="flex-column">
             <label>Phone Number </label>
           </div>
-          <div className="inputForm">
+          <div className="inputForm"style={{border: `${ server_error.non_field_errors || server_error.phone ? "1px solid Red" :""}`}}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -107,12 +159,13 @@ const Signin = () => {
               placeholder="+977 XXXXXXXXXX"
               className="input"
               type="text"
+              name="phone"
             />
           </div>
           <div className="flex-row">
           <div className="flex-column" style={{width:"47%"}}>
             <label>Password </label>
-          <div className="inputForm">
+          <div className="inputForm" style={{border: `${ server_error.non_field_errors || server_error.password  ? "1px solid Red" :""}`}}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -125,13 +178,14 @@ const Signin = () => {
             <input
               placeholder="Enter Your Password"
               className="input"
+              name="password"
               type="password"
             />
           </div>
           </div>
           <div className="flex-column" style={{width:"47%"}}>
             <label>Comfirm Password </label>
-          <div className="inputForm">
+          <div className="inputForm" style={{border: `${ server_error.non_field_errors || server_error.password2  ? "1px solid Red" :""}`}}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -144,6 +198,7 @@ const Signin = () => {
             <input
               placeholder="Comfirm Your Password"
               className="input"
+              name="password2"
               type="password"
             />
           </div>
@@ -153,19 +208,20 @@ const Signin = () => {
 
           <div className="flex-row">
             <div class="content">
-              <label class="checkBox">
+              <label class="checkBox" style={{boxShadow: `${ server_error.non_field_errors || server_error.tc  ? "0px 0px 0px 1px rgb(255 0 0 / 68%)" :""}`}}>
                 <input id="ch1" type="checkbox" />
                 <div class="transition"></div>
               </label>
               <label>Agree with <Link to="/">Terms and Conditions</Link></label>
             </div>
           </div>
-          <button className="button-submit">Sign In</button>
+          {<p className={`p line`}>{server_error.non_field_errors || server_error.password || server_error.email || server_error.name }</p>}
+          {isLoading ? <button disabled style={{background:'#151717f2'}} className="button-submit"><svg className="svg_loader" viewBox="25 25 50 50"><circle className="svgcircle" r="20" cy="50" cx="50"></circle></svg></button> : <button className="button-submit">Sign In</button>}
           <p className="p line">Or With</p>
           <div class="flex-row">
             <button class="btn google">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="-0.5 0 48 48" version="1.1">
-                <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="-0.5 0 48 48" version="1.1">
+                <g id="Icons" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                     <g id="Color-" transform="translate(-401.000000, -860.000000)">
                         <g id="Google" transform="translate(401.000000, 860.000000)">
                             <path d="M9.82727273,24 C9.82727273,22.4757333 10.0804318,21.0144 10.5322727,19.6437333 L2.62345455,13.6042667 C1.08206818,16.7338667 0.213636364,20.2602667 0.213636364,24 C0.213636364,27.7365333 1.081,31.2608 2.62025,34.3882667 L10.5247955,28.3370667 C10.0772273,26.9728 9.82727273,25.5168 9.82727273,24" id="Fill-1" fill="#FBBC05"></path>
