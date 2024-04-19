@@ -93,7 +93,7 @@ const Sidebar = ({ active }) => {
           <div className={style.subment_wrapper}>
             <h6>People</h6>
             <span className={style.model}>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/customers" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Customer </span>
               </Link>
               <Link className={style.sidebar_main_link}>

@@ -1,16 +1,3 @@
-.main_dashboard_wrapper {
-  display: block;
-  width: 100%;
-  height: 100vh;
-  padding: 0;
-  overflow: scroll;
-}
-@media (max-width: 990px) {
-  .main_dashboard_wrapper {
-    height: 100vh;
-    width: 100vw;
-  }
-}
 
 .Login_wrapper {
   display: flex;

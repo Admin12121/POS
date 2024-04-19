@@ -24,6 +24,7 @@ import CreatePassword from "./Pages/Login/CreatePassword";
 import EmailVarification from "./Pages/Login/EmailVarification";
 import Employee from "./Pages/HRM/Employee";
 import AddEmployee from "./Pages/HRM/AddEmployee";
+import Customer from "./Pages/People/Customer";
 
 const App = () => {
   return (
@@ -69,7 +70,10 @@ const AppContent = () => {
       {!isLoginRoute && <Navbar bar={setSidebar} active={sidebar} />}
       <section className="main_container">
         {!isLoginRoute && <Sidebar active={sidebar} />}
-        <div className="main_dashboard_wrapper">
+        <div
+          className="main_dashboard_wrapper"
+          style={{ height: `${isLoginRoute ? "100vh" : "92vh"}` }}
+        >
           <Routes>
             <Route index element={<Admin_Dashboard />} />
             <Route path="products" element={<Products />} />
@@ -133,6 +137,14 @@ const AppContent = () => {
               }
             />
 
+            <Route
+              path="customers"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <Customer />
+                </Suspense>
+              }
+            />
             <Route path="*" element={<h1>Error 404 Page not found !!</h1>} />
           </Routes>
         </div>
