@@ -119,11 +119,18 @@
       overflow-x: hidden;
       transition: 1s ease-in-out;
 
+      &::-webkit-scrollbar{
+        display: none;
+      }
       @media (max-width:990px) {
         width: 100vw;
       }
       @media (max-width:720px) {
         min-width: unset;
+        padding: 0;
+        .form{
+          width: 100%!important;
+        }
       }
 
       .form {
@@ -154,7 +161,6 @@
             }
           }
         }
-      
       }
       
       ::placeholder {
@@ -204,7 +210,7 @@
         justify-content: space-between;
         .content{
           display: flex;
-          gap: 5px;
+          gap: 15px;
           align-items: center;
         }
         .clear {
@@ -347,7 +353,7 @@
     stroke-width: 2;
     stroke-dasharray: 1, 200;
     stroke-dashoffset: 0;
-    stroke-linecap: round;
+    strokeLinecap: round;
     animation: dash4 1.5s ease-in-out infinite;
    }
    
@@ -373,4 +379,27 @@
     }
    }
    
+}
+
+.ResetPassword_wrapper{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .reset_wrapper{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .form{
+      height: 100%;
+      justify-content: center;
+      .inputForm{
+        gap: 10px;
+
+      }
+    }
+  }
 }

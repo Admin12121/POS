@@ -74,7 +74,7 @@ const Login = () => {
         </div>
           <div className="auth-footer">
               <div className="footer-top-bar"></div>
-              <p>Powered by <a href="www.kantipurinfotech.com" className="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
+              <p>Powered by <a href="https://kantipurinfotech.com/" target="_bank" className="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
           </div>
       </div>
       <div className="login_wrapper">
@@ -126,15 +126,9 @@ const Login = () => {
             />
           </div>
 
-          <div className="flex-row">
-            <div className="content">
-              <label className="checkBox">
-                <input id="ch1" type="checkbox" />
-                <div className="transition"></div>
-              </label>
-              <label>Remember me </label>
-            </div>
-            <Link to="" className="span">Forgot password?</Link>
+          <div className="flex-row" style={{justifyContent:"end"}}>
+
+            <Link to="/forgot-password" className="span">Forgot password?</Link>
           </div>
           <button className="button-submit">Sign In</button>
           <p className="p line">Or With</p>
@@ -161,7 +155,7 @@ const Login = () => {
           </p>
         </form>
         <div className="auth-footer">
-              <p>Powered by <a href="www.kantipurinfotech.com" className="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
+              <p>Powered by <a href="https://kantipurinfotech.com/" target="_bank" className="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
           </div>
       </div>
     </div>

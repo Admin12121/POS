@@ -140,3 +140,8 @@ div{
 #hide{
   display: none;
 }
+
+ol li div{
+  text-overflow: unset;
+  white-space: unset;
+}

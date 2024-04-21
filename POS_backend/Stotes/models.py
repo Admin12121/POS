@@ -3,20 +3,11 @@ import random
 import string
 from django.db import models
 from django.core.validators import FileExtensionValidator
-from django.contrib.auth.models import  Group
-from django.contrib.auth.models import Group as BaseGroup
-from Accounts.models import User
+from Accounts.models import User, Group
  #  Custom User Manager
 def generate_random_code():
      return random.randint(10000, 99999)
 
-
-class Group(BaseGroup):
-    code = models.CharField(max_length=200, null=True, blank=True)
-
-    class Meta:
-        verbose_name = 'Group'
-        verbose_name_plural = 'Groups'
 
 # Create your models here.
 
@@ -39,11 +30,22 @@ class Store(models.Model):
         group, created = Group.objects.get_or_create(name=group_name)
         group.code = store_code
         group.save()
-        if created:
+        if self.store_owner:
+            self.store_owner.stor = group
+            self.store_owner.save()
+            
+    def delete(self, *args, **kwargs):
+        try:
+            group = Group.objects.get(code=self.store_code)
+            print(f"Found group with code: {group.code}")
+            group.delete()
+            print("Group deleted successfully")
+        except Group.DoesNotExist:
+            print("Group not found for deletion")
             pass
-
+        super().delete(*args, **kwargs)
     def __str__(self):
-        return self.name
+      return f"{self.name}"
 
 class Department(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
@@ -71,5 +73,5 @@ class Customers(models.Model):
             self.code = generate_random_code()
         super().save(*args, **kwargs)
     def __str__(self):
-      return f"{self.name} - {self.email} - {self.phone}"
+      return f"{self.name} - {self.email}"
 

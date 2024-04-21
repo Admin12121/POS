@@ -22,7 +22,7 @@ class CategoryView(APIView):
               # Get the store object by store code
               store = get_object_or_404(Store, store_code=store_code)
               # Filter users by store and name
-              category = Category.objects.filter(store=store, name__icontains=category)
+              category = Category.objects.filter(store=store, category__icontains=category)
           elif store_code:
               # Get the store object by store code
               store = get_object_or_404(Store, store_code=store_code)
@@ -102,23 +102,23 @@ class ProductsView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
-          name = request.query_params.get('name')
+          product_name = request.query_params.get('product_name')
           store_code = request.query_params.get('store')
 
-          if store_code and name:
+          if store_code and product_name:
               # Get the store object by store code
               store = get_object_or_404(Store, store_code=store_code)
               # Filter users by store and name
-              category = Category.objects.filter(store=store, name__icontains=name)
+              name = Products.objects.filter(store=store, product_name__icontains=product_name)
           elif store_code:
               # Get the store object by store code
               store = get_object_or_404(Store, store_code=store_code)
               # Filter users only by store
-              category = Category.objects.filter(store=store)
+              product = Products.objects.filter(store = store)
           else:
               # Handle the case where store_code is not provided
-              category = Category.objects.none()
-          serializer = CategorySerializer(category, many=True)
+              product = Products.objects.none()
+          serializer = ProductsSerializer(product, many=True)
           return Response(serializer.data, status=status.HTTP_200_OK)
     
 

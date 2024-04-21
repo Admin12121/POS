@@ -3,11 +3,20 @@ import random
 import string
 from django.db import models
 from django.core.validators import FileExtensionValidator
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Group
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import Group as BaseGroup
 from django.core.exceptions import PermissionDenied
  #  Custom User Manager
 def generate_random_code():
      return random.randint(10000, 99999)
+
+
+class Group(BaseGroup):
+    code = models.CharField(max_length=200, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Group'
+        verbose_name_plural = 'Groups'
 
 class UserManager(BaseUserManager):
      def create_user(self, email, first_name, last_name, phone, password=None, password2=None, stor_code=None, **extra_fields):
@@ -107,7 +116,6 @@ class User(AbstractBaseUser):
          "Is the user a member of staff?"
          # Simplest possible answer: All admins are staff
          return self.is_admin
-
 
 
 

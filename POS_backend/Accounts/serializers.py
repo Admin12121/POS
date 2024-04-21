@@ -8,7 +8,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.conf import settings
 from .utils import Util
 from .models import *
-from Stotes.models import Store , Group
+from Stotes.models import Store 
 #User
 class UserRegistrationSerializer(serializers.ModelSerializer):
   password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
@@ -100,12 +100,28 @@ class UserDataSerializer(serializers.ModelSerializer):
 
       def get_stor(self, obj):
           if obj.stor:
-              return obj.stor.name
+            return {
+                'name': obj.stor.name,
+                'code': obj.stor.code
+            }
           else:
               return None
       class Meta:
         model = User
         exclude = ['password']
+      
+      def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.is_admin:
+            data['is_admin'] = True
+            data.pop('is_superuser', None)
+            data.pop('is_active', None)
+        else:
+            # If the user is not admin, remove is_superuser and is_active from the data
+            data.pop('is_admin', None)
+            data.pop('is_superuser', None)
+            data.pop('is_active', None)
+        return data
 
 class UserChangePasswordSerializer(serializers.Serializer):
   password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)

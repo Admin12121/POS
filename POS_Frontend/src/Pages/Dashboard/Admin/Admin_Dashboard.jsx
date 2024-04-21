@@ -1,9 +1,32 @@
 import React, { useState } from "react";
 import style from "./style.module.scss";
 import { Link } from "react-router-dom";
-import { Reorder } from "framer-motion";
+import DataTable from 'react-data-table-component';
+
 const Admin_Dashboard = () => {
   const [items, setItems] = useState([1,2,3,4])
+
+  const columns = [
+    {
+      name:"Product",
+      selector: row => row.product,
+      sortable:true
+    },
+    {
+      name:"Price",
+      selector: row => row.price,
+      sortable:true
+    },
+  ]
+
+  const data =[
+    {
+      id:1,
+      product: "Laptop",
+      price:"$1200"
+    },
+
+  ]
   return (
     <>
       <div className={style.main_dashboard}>
@@ -65,9 +88,9 @@ const Admin_Dashboard = () => {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="feather feather-user"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  classNAme="feather feather-user"
                 >
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
@@ -88,9 +111,9 @@ const Admin_Dashboard = () => {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="feather feather-user-check"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  classNAme="feather feather-user-check"
                 >
                   <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="8.5" cy="7" r="4"></circle>
@@ -112,9 +135,9 @@ const Admin_Dashboard = () => {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="feather feather-file"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  classNAme="feather feather-file"
                 >
                   <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                   <polyline points="13 2 13 9 20 9"></polyline>
@@ -135,9 +158,9 @@ const Admin_Dashboard = () => {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="feather feather-file"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  classNAme="feather feather-file"
                 >
                   <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                   <polyline points="13 2 13 9 20 9"></polyline>
@@ -153,7 +176,7 @@ const Admin_Dashboard = () => {
               <h1>Recent Products</h1>
               <Link>View All</Link>
             </span>
-            <div className={style.main_table}>
+            {/* <div className={style.main_table}>
               <div className={style.header}>
                 <span>
                   <h3>#</h3>
@@ -218,7 +241,12 @@ const Admin_Dashboard = () => {
                   <h2>$1200</h2>
                 </span>
               </div>
-            </div>
+            </div> */}
+            <DataTable
+              columns={columns}
+              data={data}
+              selectableRows
+            ></DataTable>
           </div>
         </div>
         <div className={style.main_t_table}>

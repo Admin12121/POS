@@ -33,6 +33,16 @@ class CustomersView(APIView):
            serializer = CustomersDataSerializer(users, many=True)
            return Response(serializer.data, status=status.HTTP_200_OK)
 
+class RegisterCustomersView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+         serializer = RegisterCustomerSerializer(data= request.data)
+         serializer.is_valid(raise_exception=True)
+         serializer.save()
+         return Response({'msg':'Customer Registred'}, status=status.HTTP_201_CREATED)
+
 class DepartmentDataView(APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]

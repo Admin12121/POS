@@ -90,7 +90,7 @@ const AppContent = ({data}) => {
 
   const dispatch = useDispatch();
   const location = useLocation();
-  const isLoginRoute = ["/login", "/signin", '/reset', '/comfirm','/accounts/activate/'].includes(location.pathname);
+  const isLoginRoute = ["/login", "/signin", '/reset', '/comfirm', '/forgot-password'].includes(location.pathname);
   let { access_token } = getToken();
   useEffect(() => {
     dispatch(setUserToken({ access_token: access_token }));
@@ -115,6 +115,7 @@ const AppContent = ({data}) => {
             <Route path="category" element={access_token ?<Category/>: <Navigate to="/login" />} />
             <Route path="login" element={ !access_token ? <Suspense fallback={<Loader/>}><Login /></Suspense> : <Navigate to="/" />}/>
             <Route path="signin" element={!access_token ? <Suspense fallback={<Loader/>}><Signin /></Suspense>: <Navigate to="/" />}/>
+            <Route path="forgot-password" element={!access_token ? <Suspense fallback={<Loader/>}><Resetpassword/></Suspense>: <Navigate to="/" />}/>
             <Route path="*" element={<h1>Error 404 Page not found !!</h1>} />
           </Routes>
         </div>
