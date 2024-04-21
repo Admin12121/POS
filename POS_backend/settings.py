@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-z0!mo9l#4+4_v2&9=j1zsxq6yiag^a8dqe59ef!(&0-ngjvp9a
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -72,12 +72,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'POS_backend.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'POS',
+        'USER': 'postgres',
+        'PASSWORD': 'sudoadmin@12',
+        'HOST': 'localhost',
+        'PORT': '5432',
+}}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

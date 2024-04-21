@@ -43,7 +43,7 @@ class AdminRegistrationView(APIView):
     message2 = render_to_string('email_confirmation.html',{
         
         'name': myuser.first_name,
-        'domain': 'localhost:3000',
+        'domain': 'localhost:5173',
         'uid': urlsafe_base64_encode(force_bytes(myuser.pk)),
         'token': generate_token.make_token(myuser)
     })
@@ -76,7 +76,7 @@ class UserRegistrationView(APIView):
     message2 = render_to_string('email_confirmation.html',{
         
         'name': myuser.first_name,
-        'domain': 'localhost:3000',
+        'domain': 'localhost:5173',
         'uid': urlsafe_base64_encode(force_bytes(myuser.pk)),
         'token': generate_token.make_token(myuser)
     })

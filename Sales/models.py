@@ -12,7 +12,7 @@ class Sales(models.Model):
     status = models.BooleanField()
     grand_total = models.IntegerField(null=True)
     paid = models.IntegerField(null=True)
-    due = models.ImageField(null=True)
+    due = models.IntegerField(null=True)
     biller = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None)
 
     def __str__(self):

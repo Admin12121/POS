@@ -1,7 +1,36 @@
 from rest_framework import serializers
 from .models import *
+from Accounts.models import Group
 
 
+class RegisterCustomerSerializer(serializers.ModelSerializer):
+    stor_code = serializers.CharField(write_only=True)
+    class Meta:
+        model = Customers
+        fields=['stor_code','profile', 'name', 'email', 'phone', 'addresh', 'city', 'country', 'description',]
+
+    def validate(self,attrs):
+        stor_code = attrs.get('stor_code')
+        phone = attrs.get('phone')
+        email = attrs.get('email')
+        if not Store.objects.filter(store_code = stor_code).exists():
+            raise serializers.ValidationError("Store is not Registered.")
+        
+        if Customers.objects.filter(store__store_code=stor_code, email=email).exists():
+            raise serializers.ValidationError("Customer with the same email already exists in the store.")
+        
+        if Customers.objects.filter(store__store_code=stor_code, phone=phone).exists():
+            raise serializers.ValidationError("Customer with the same phone number already exists in the store.")
+        
+        return attrs
+    
+    def create(self, validate_data):
+        code = validate_data.pop('stor_code')
+        store = Store.objects.get(store_code = code)
+        customer =  Customers.objects.create(**validate_data)
+        customer.store = store
+        customer.save()
+        return customer
 
 class CustomersDataSerializer(serializers.ModelSerializer):
        store = serializers.SerializerMethodField()
@@ -49,8 +78,6 @@ class StoreRegistrationSerializer(serializers.ModelSerializer):
         user.stor = group
         user.save()
         return store             
-
-
 
 class DepartmentDataSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
