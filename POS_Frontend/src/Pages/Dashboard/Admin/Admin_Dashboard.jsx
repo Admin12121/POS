@@ -10,6 +10,7 @@ const Admin_Dashboard = () => {
     {
       name:"Product",
       selector: row => row.product,
+      width: "66%",
       sortable:true
     },
     {
@@ -22,7 +23,32 @@ const Admin_Dashboard = () => {
   const data =[
     {
       id:1,
-      product: "Laptop",
+      product: <div style={{display:"flex", alignItems:"center", gap:"10px"}}><img src="https://i.pinimg.com/564x/74/01/91/74019147bfab5bac73ed1152969a9f31.jpg" style={{height:"30px"}}/><p>Laptop</p></div>,
+      price:"$1200"
+    },
+    {
+      id:1,
+      product: <div style={{display:"flex", alignItems:"center", gap:"10px"}}><img src="https://i.pinimg.com/564x/74/01/91/74019147bfab5bac73ed1152969a9f31.jpg" style={{height:"30px"}}/><p>Laptop</p></div>,
+      price:"$1200"
+    },
+    {
+      id:1,
+      product: <div style={{display:"flex", alignItems:"center", gap:"10px"}}><img src="https://i.pinimg.com/564x/74/01/91/74019147bfab5bac73ed1152969a9f31.jpg" style={{height:"30px"}}/><p>Laptop</p></div>,
+      price:"$1200"
+    },
+    {
+      id:1,
+      product: <div style={{display:"flex", alignItems:"center", gap:"10px"}}><img src="https://i.pinimg.com/564x/74/01/91/74019147bfab5bac73ed1152969a9f31.jpg" style={{height:"30px"}}/><p>Laptop</p></div>,
+      price:"$1200"
+    },
+    {
+      id:1,
+      product: <div style={{display:"flex", alignItems:"center", gap:"10px"}}><img src="https://i.pinimg.com/564x/74/01/91/74019147bfab5bac73ed1152969a9f31.jpg" style={{height:"30px"}}/><p>Laptop</p></div>,
+      price:"$1200"
+    },
+    {
+      id:1,
+      product: <div style={{display:"flex", alignItems:"center", gap:"10px"}}><img src="https://i.pinimg.com/564x/74/01/91/74019147bfab5bac73ed1152969a9f31.jpg" style={{height:"30px"}}/><p>Laptop</p></div>,
       price:"$1200"
     },
 
@@ -90,7 +116,7 @@ const Admin_Dashboard = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  classNAme="feather feather-user"
+                  className="feather feather-user"
                 >
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
@@ -113,7 +139,7 @@ const Admin_Dashboard = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  classNAme="feather feather-user-check"
+                  className="feather feather-user-check"
                 >
                   <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="8.5" cy="7" r="4"></circle>
@@ -137,7 +163,7 @@ const Admin_Dashboard = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  classNAme="feather feather-file"
+                  className="feather feather-file"
                 >
                   <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                   <polyline points="13 2 13 9 20 9"></polyline>
@@ -160,7 +186,7 @@ const Admin_Dashboard = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  classNAme="feather feather-file"
+                  className="feather feather-file"
                 >
                   <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                   <polyline points="13 2 13 9 20 9"></polyline>
@@ -243,9 +269,12 @@ const Admin_Dashboard = () => {
               </div>
             </div> */}
             <DataTable
+              pagination
               columns={columns}
               data={data}
               selectableRows
+              fixedHeader
+              fixedHeaderScrollHeight="280px"
             ></DataTable>
           </div>
         </div>

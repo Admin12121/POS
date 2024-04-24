@@ -1,11 +1,13 @@
 import React,{useState, useEffect} from 'react'
-import './store.scss'
+import { getToken } from '../../Fetch_Api/Service/LocalStorageServices';
 import { useNavigate} from "react-router-dom";
 import { useStoreRegistrationMutation } from "../../Fetch_Api/Service/User_Auth_Api";
+import './store.scss'
 
 const Register_Store = ({email}) => {
     const [RegStore, { isLoading }] = useStoreRegistrationMutation();
     const [server_error, setServerError] = useState({});
+    let { access_token } = getToken();
     const navigate = useNavigate();
     useEffect(() => {
         if (Object.keys(server_error).length > 0) {
@@ -24,14 +26,12 @@ const Register_Store = ({email}) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         const actualData = {
-          owner_email: email,
           name: data.get("store"),
+          owner_email: email,
         };
-        console.log(actualData)
-        const res = await RegStore(actualData);
+        const res = await RegStore({actualData, access_token });
         if (res.error) {
-            console.log(res.error)
-          setServerError(res.error)
+          setServerError(res.error.data.errors)
         }
         if (res.data) {
           toast.success(res.data.msg, {

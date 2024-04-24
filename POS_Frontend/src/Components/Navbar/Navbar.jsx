@@ -3,8 +3,8 @@ import {Link,useNavigate} from "react-router-dom"
 import styles from "./style.module.scss";
 import { useDispatch } from "react-redux";
 import {toast } from 'sonner';
-import { setUserToken, unSetUserToken } from '../../Fetch_Api/Feature/authSlice';
-import { getToken,storeToken, removeToken } from '../../Fetch_Api/Service/LocalStorageServices';
+import { unSetUserToken } from '../../Fetch_Api/Feature/authSlice';
+import { removeToken } from '../../Fetch_Api/Service/LocalStorageServices';
 const Navbar = ({user, bar, active}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

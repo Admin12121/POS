@@ -30,6 +30,7 @@ class AdminRegistrationView(APIView):
   def post(self, request, format=None):
     serializer = AdminRegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
+    
     myuser = serializer.save()
     # Welcome Email
     subject = "Welcome to genzcoder !!"

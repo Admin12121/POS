@@ -15,7 +15,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
   stor_code = serializers.CharField(write_only=True)
   class Meta:
     model = User
-    fields=['email', 'first_name', 'last_name', 'stor_code', 'phone', 'dob', 'gender', 'employee_role', 'password', 'password2']
+    fields=['email', 'first_name', 'last_name', 'stor_code', 'phone', 'dob', 'gender', 'employee_role','tc', 'password', 'password2']
     extra_kwargs={
       'password':{'write_only':True}
     }
@@ -57,7 +57,7 @@ class AdminRegistrationSerializer(serializers.ModelSerializer):
   password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
   class Meta:
     model = User
-    fields=['email', 'first_name', 'last_name' ,'phone', 'password', 'password2']
+    fields=['email', 'first_name', 'last_name' ,'phone', 'password', 'password2','tc']
     extra_kwargs={
       'password':{'write_only':True}
     }

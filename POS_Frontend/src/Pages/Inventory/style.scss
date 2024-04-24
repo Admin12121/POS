@@ -143,3 +143,205 @@
     height: 0 !important;
     padding: 0!important;
   }
+
+.main_products_wrapper{
+  
+}
+  .nav_item {
+    display: flex;
+    align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    justify-content: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+    border: 1px solid rgba(145, 158, 171, 0.3);
+    cursor: pointer;
+    position: relative;
+    .icon_links{
+        display: flex;
+        align-items: center;
+    }
+    &:hover {
+        a{
+            color: #ff9f43;
+        }
+    }
+    
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+        color: #67748E;
+        svg {
+            width: 15px;
+        }
+    }
+
+}
+
+.uploading_form{
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  z-index: 999;
+  justify-content: center;
+  background-color: #12121285;
+  form{
+    width: 500px;
+    padding: 20px;
+    border-radius: 7px;
+    background-color: rgb(255, 255, 255);
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+
+    @media (max-width:720px) {
+      width: 90%;
+    }
+
+    .flex-row{
+      justify-content: space-between;
+      .switch {
+        --secondary-container: #41613f;
+        --primary: #42e24a;
+        font-size: 17px;
+        position: relative;
+        display: inline-block;
+        width:2em;
+        height: 1em;
+       }
+       
+       .switch input {
+        display: none;
+        opacity: 0;
+        width: 0;
+        height: 0;
+       }
+       
+       .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #313033;
+        transition: .2s;
+        border-radius: 30px;
+       }
+       
+       .slider:before {
+        position: absolute;
+        content: "";
+        height: .8em;
+        width: .8em;
+        border-radius: 20px;
+        left: 0.15em;
+        bottom: 0.1em;
+        background-color: #aeaaae;
+        transition: .4s;
+       }
+       
+       input:checked + .slider::before {
+        background-color: var(--primary);
+       }
+       
+       input:checked + .slider {
+        background-color: var(--secondary-container);
+       }
+       
+       input:focus + .slider {
+        box-shadow: 0 0 1px var(--secondary-container);
+       }
+       
+       input:checked + .slider:before {
+        transform: translateX(.9em);
+       }
+       .button{
+        display: flex;
+        gap: 10px;
+        button{
+         padding: 9px 15px;
+         border-radius: 5px;
+         border: none;
+         outline: none;
+         color: #fff;
+         cursor: pointer;
+         &:nth-child(1){
+          background: #424b5296;
+          &:hover{
+            background: #424b52;
+          }
+         }
+         &:nth-child(2){
+          background: var(--primary-color);
+          &:hover{
+            background: var(--primary-color);
+          }
+         }
+        }
+       }
+    }
+    
+    .flex-column{
+      width: 100%;
+      flex-direction: column;
+      align-items: start;
+      .Image_Uploader{
+        .custum-file-upload {
+          height: 100px;
+          width: 120px;
+          display: flex;
+          flex-direction: column;
+          align-items: space-between;
+          background-position: center;
+          background-size: 120px;
+          cursor: pointer;
+          align-items: center;
+          justify-content: center;
+          border: 2px dashed #cacaca;
+          background-color: rgba(255, 255, 255, 1);
+          padding: 1rem;
+          gap: 10px;
+          border-radius: 10px;
+          box-shadow: 0px 48px 35px -48px rgba(0,0,0,0.1);
+        }
+        
+        .custum-file-upload .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .custum-file-upload .text {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+        }
+        
+        .custum-file-upload .text span {
+          font-weight: 400;
+          color: rgba(75, 85, 99, 1);
+        }
+        
+        .custum-file-upload input {
+          display: none;
+        }
+       }
+    }
+    .inputForm{
+      background-color: #fff;
+    }
+
+  }
+}

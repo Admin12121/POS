@@ -19,7 +19,7 @@ class Group(BaseGroup):
         verbose_name_plural = 'Groups'
 
 class UserManager(BaseUserManager):
-     def create_user(self, email, first_name, last_name, phone, password=None, password2=None, stor_code=None, **extra_fields):
+     def create_user(self, email, first_name, last_name, phone, tc, password=None, password2=None, stor_code=None, **extra_fields):
          """
          Creates and saves a User with the given email, name, and password.
          """
@@ -31,13 +31,14 @@ class UserManager(BaseUserManager):
              first_name=first_name,
              last_name=last_name,
              phone=phone,
+             tc=tc,
              **extra_fields
          )
          user.set_password(password)
          user.save(using=self._db)
          return user
 
-     def create_superuser(self, email, first_name, last_name, phone, password=None, password2=None, **extra_fields):
+     def create_superuser(self, email, first_name, last_name, phone, tc, password=None, password2=None, **extra_fields):
          """
          Creates and saves a superuser with the given email, name, and password.
          """
@@ -46,7 +47,7 @@ class UserManager(BaseUserManager):
 
          if extra_fields.get('is_superuser') is not True:
              raise ValueError('Superuser must have is_superuser=True.')
-         return self.create_user(email,  first_name, last_name, phone, password, **extra_fields)
+         return self.create_user(email,  first_name, last_name, phone,tc, password,  **extra_fields)
 
 class User(AbstractBaseUser):
      email = models.EmailField(
@@ -63,6 +64,7 @@ class User(AbstractBaseUser):
      gender = models.CharField(max_length=10, null=True, blank=True)
      employee_role = models.CharField(max_length=200, blank=True, null=True)
      employee_id = models.CharField(max_length=10, editable=False, blank=True, null=True)
+     tc = models.BooleanField(default=False)
      is_active = models.BooleanField(default=True)
      is_admin = models.BooleanField(default=False)
      is_superuser = models.BooleanField(default=False)
@@ -96,7 +98,7 @@ class User(AbstractBaseUser):
 
      objects = UserManager()
      USERNAME_FIELD = 'email'
-     REQUIRED_FIELDS = ['first_name','last_name','phone']
+     REQUIRED_FIELDS = ['first_name','last_name','phone', 'tc']
 
      def __str__(self):
              return self.email

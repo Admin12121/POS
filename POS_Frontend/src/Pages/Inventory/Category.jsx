@@ -1,16 +1,122 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from './style.module.scss'
 import {Link} from 'react-router-dom'
-
-const Category = () => {
+import moment from 'moment';
+import {toast } from 'sonner';
+import DataTable from 'react-data-table-component';
+import {useCategoryViewQuery, useAddCategoryMutation,useDeleteCategoryMutation} from  "../../Fetch_Api/Service/User_Auth_Api"
+const Category = ({user}) => {
+  const [storeCode, setActualData]  = useState(user.stor.code)
+  const {data, isLoading, refetch } = useCategoryViewQuery(storeCode);
     const [hide, sethide] = useState(true)
+    const [add, setAdd] = useState(true)
+    const [ AddCategory, { Loading }  ] = useAddCategoryMutation();
+    const [ DeleteCategory , {Success}] = useDeleteCategoryMutation();
+    const columns = [
+      {
+        name:"Category",
+        selector: row => row.category,
+        width: "300px",
+      },
+      {
+        name:"Category slug",
+        selector: row => row.categoryslug,
+        width: "250px",
+      },
+      {
+        name:"Created on",
+        selector: row => row.createdon,
+        width: "200px",
+        sortable:true
+      },
+      {
+        name:"Status",
+        selector: row => row.status,
+        width: "200px",
+        sortable:true
+      },
+      {
+        name:"Action",
+        selector: row => row.action,
+        width: "200px",
+        sortable:true
+      },
+    ]
+    const table_data = data ? data.map(({id,category,created_on,status,categoryslug})=>({
+        id:id,
+        category: category,
+        categoryslug: categoryslug,
+        createdon: moment(created_on).format('YYYY-MM-DD'),
+        status: `${status ? 'Active' : 'InActive'}`,
+        action: <span style={{display:"flex", gap:"5px", alignItems:"center",  width:"140px"}}>
+        <span className="nav_item">
+            <Link className={style.icon_links}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </Link>
+        </span>
+        <span className="nav_item" onClick={() => handleDelete(id)}>
+            <Link className={style.icon_links}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </Link>
+        </span>
+    </span>
+    })) :[
+    ]
+
+    const handelSubmit = async (e) => {
+      e.preventDefault();
+      const data = new FormData(e.currentTarget);
+      const statusCheckbox = e.currentTarget.elements.status;
+      const status = statusCheckbox.checked;
+      const statusString = status ? 'true' : 'false';
+    
+      // Convert the boolean value to 'true' or 'false' string
+      const actualData = {
+        stor_code: storeCode,
+        category: data.get("category"),
+        status: statusString,
+        categoryslug: data.get("categoryslug")
+      };
+      const res = await AddCategory(actualData );
+      if(res.error){
+        console.log(res.error)
+      }
+      if(res.data){
+        setAdd(prev=>!prev)
+        e.target.reset(); 
+        refetch();
+        toast.success(res.data.msg, {
+          action: {
+            label: 'X',
+            onClick: () => toast.dismiss(),
+          },} );
+      }
+    }
+    const handleDelete = async(id) => {
+      const res = await DeleteCategory(id);
+      if(res.data){
+        toast.success(res.data.msg, {
+          action: {
+            label: 'X',
+            onClick: () => toast.dismiss(),
+          },} );
+      }
+      else{
+        console.log(res.error)
+      }
+      refetch();
+    }
+    useEffect(() => {
+      refetch();
+    }, [storeCode, refetch]);
+
   return (
     <>
-          <div className={style.main_products_wrapper}>
+      <div className={style.main_products_wrapper}>
         <div className={style.header_section}>
           <span className={style.text_con}>
-            <h1>Expired Product</h1>
-            <p>Manage your expired products</p>
+            <h1>Category</h1>
+            <p>Manage your categories</p>
           </span>
           <span className={style.action_buttons}>
             <span className={style.small_button}>
@@ -62,6 +168,27 @@ const Category = () => {
                 </svg>
                 </div>
             </span>
+            <div className={style.main_imp_button}>
+                <span onClick={(e) =>{ setAdd(prev=>!prev); e.preventDefault() }} className={style.import_export}>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="feather feather-plus-circle me-2"
+                >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Add New Category
+                </span>
+            </div>
           </span>
         </div>
         <div className={style.table_section}>
@@ -110,62 +237,50 @@ const Category = () => {
                     </div>
                 </div>
             </div>
-          <div className={style.main_t_table}>
-            <div className={style.header}>
-              <span className={style.exp_products} >
-                <h4>#</h4>
-                <h3>Products</h3>
-                <h3>SKU</h3>
-                <h3>Manufactured Date</h3>
-                <h3>Expired Date</h3>
-                <h4>Action</h4>
-              </span>
-            </div>
-            <div className={style.list_of_product}>
-              <span className={style.list}>
-                <span className={style.list_exp_elements}>
-                  <span>
-                    <h1>1</h1>
-                  </span>
-                  <span>
-                  <img
-                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/stock-img-01.png"
-                    alt=""
-                  />
-                  <p>Nitro 7</p>
-                  </span>
-                  <span>
-                    <h2>PT010</h2>
-                  </span>
-                  <span>
-                    <h2>15 April 2024</h2>
-                  </span>
-                  <span>
-                    <h2>12 May 2024</h2>
-                  </span>
-                  <span>
-                      <span className={style.nav_item}>
-                          <Link className={style.icon_links}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" strokeLinejoin="round" class="feather feather-eye action-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                          </Link>
-                      </span>
-                      <span className={style.nav_item}>
-                          <Link className={style.icon_links}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" strokeLinejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                          </Link>
-                      </span>
-                      <span className={style.nav_item}>
-                          <Link className={style.icon_links}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" strokeLinejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                          </Link>
-                      </span>
-                  </span>
-                </span>
-              </span>
-            </div>
-          
-          </div>
+            <DataTable
+              pagination
+              columns={columns}
+              data={table_data}
+              selectableRows
+              fixedHeader
+              fixedHeaderScrollHeight="79vh"
+            ></DataTable>
         </div>
+      </div>
+      <div className="uploading_form" style={{display:`${add ? "none" : "flex"}`}}>
+        <form action="" onSubmit={handelSubmit}>
+                <div className="flex-row">
+                    <label>Create Category</label>
+                    <label className="close_btn" style={{cursor:"pointer"}} onClick={(e) =>{ setAdd(prev=>!prev); e.preventDefault() }}>x</label>
+                </div>
+                <div className="flex-row">
+                    <label>Category</label>
+                    <div className="inputForm">
+                        <input type="text" className="input" name="category" placeholder="Enter Category" required/>
+                    </div>
+                </div>
+                <div className="flex-row">
+                    <label>Category Slug</label>
+                    <div className="inputForm">
+                        <input type="text" className="input" name="categoryslug" placeholder="Enter CategorySlug" required/>
+                    </div>
+                </div>
+                <div className="flex-row">
+                    <label>Status</label>
+                    <label class="switch">
+                      <input type="checkbox" name="status" />
+                      <span class="slider"></span>
+                    </label>
+                </div>
+                <div className="flex-row">
+                  <span></span>
+                  <div className="button">
+                    <button onClick={(e) =>{ setAdd(prev=>!prev); e.preventDefault() }}>Close</button>
+                    <button type="submit">Create Category</button>
+                  </div>
+                </div>
+
+        </form>
       </div>
     </>
   )

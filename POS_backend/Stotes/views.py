@@ -59,10 +59,10 @@ class DepartmentDataView(APIView):
 
 class RegisterStoreView(APIView):
      renderer_classes = [UserRenderer]
+     permission_classes = [IsAuthenticated]
 
      def post(self, request, format=None):
         serializer = StoreRegistrationSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
         return Response({'msg':'Store Registred'}, status=status.HTTP_201_CREATED)

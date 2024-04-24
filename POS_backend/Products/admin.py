@@ -6,23 +6,23 @@ from .models import*
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('category', 'store', 'status', 'created_on', 'categoryslug', 'createdby')
     search_fields = ('category','store')
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.stor:
-            group = request.user.stor
-            return qs.filter(store__store_owner__stor__code=group.code)
-        return qs.none()  # Return an empty queryset if user has no associated group
+    # def get_queryset(self, request):
+    #     qs = super().get_queryset(request)
+    #     if request.user.stor:
+    #         group = request.user.stor
+    #         return qs.filter(store__store_owner__stor__code=group.code)
+    #     return qs.none()  # Return an empty queryset if user has no associated group
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ('subcategory' ,'category' , 'store', 'createdby')
     search_fields = ('category', 'subcategory','store')
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.stor:
-            group = request.user.stor
-            return qs.filter(store__store_owner__stor__code=group.code)
-        return qs.none()  # Return an empty queryset if user has no associated group
+    # def get_queryset(self, request):
+    #     qs = super().get_queryset(request)
+    #     if request.user.stor:
+    #         group = request.user.stor
+    #         return qs.filter(store__store_owner__stor__code=group.code)
+    #     return qs.none()  # Return an empty queryset if user has no associated group
 
 
 class BrandAdmin(admin.ModelAdmin):
@@ -34,13 +34,13 @@ class BrandAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="max-height: 50px; max-width: 50px; object-fit: cover" />', obj.logo.url)
         else:
             return 'No Image'
-    display_logo.short_description = 'Logo'
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.stor:
-            group = request.user.stor
-            return qs.filter(store__store_owner__stor__code=group.code)
-        return qs.none()  # Return an empty queryset if user has no associated group
+    # display_logo.short_description = 'Logo'
+    # def get_queryset(self, request):
+    #     qs = super().get_queryset(request)
+    #     if request.user.stor:
+    #         group = request.user.stor
+    #         return qs.filter(store__store_owner__stor__code=group.code)
+    #     return qs.none()  # Return an empty queryset if user has no associated group
     
 
 
@@ -55,12 +55,12 @@ class ProductsAdmin(admin.ModelAdmin):
             return 'No Image'
     display_logo.short_description = 'Product_Image'
     
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.stor:
-            group = request.user.stor
-            return qs.filter(store__store_owner__stor__code=group.code)
-        return qs.none()  # Return an empty queryset if user has no associated group
+    # def get_queryset(self, request):
+    #     qs = super().get_queryset(request)
+    #     if request.user.stor:
+    #         group = request.user.stor
+    #         return qs.filter(store__store_owner__stor__code=group.code)
+    #     return qs.none()  # Return an empty queryset if user has no associated group
     
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)

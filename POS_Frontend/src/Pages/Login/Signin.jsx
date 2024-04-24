@@ -37,7 +37,7 @@ const Signin = () => {
       phone: data.get("phone"),
       password: data.get("password"),
       password2: data.get("password2"),
-      // tc: data.get("tc"),
+      tc: data.get("tc"),
     };
     const res = await registerUser(actualData);
     if (res.error) {
@@ -58,16 +58,16 @@ const Signin = () => {
         <div className="overlay">
           <div className="main_over"></div>
           <img src="1.jpg" alt="" />
-          <div classNAme="carousel-caption">
-              <div classNAme="top-bar"></div>
+          <div className="carousel-caption">
+              <div className="top-bar"></div>
               <h5>Get the most from RestroNepal</h5>
               <p>Exciting product updates coming this fall.</p>
                 <a href="">Learn More</a>
           </div>
         </div>
-          <div classNAme="auth-footer">
-              <div classNAme="footer-top-bar"></div>
-              <p>Powered by <a href="https://kantipurinfotech.com/" target="_bank" classNAme="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
+          <div className="auth-footer">
+              <div className="footer-top-bar"></div>
+              <p>Powered by <a href="https://kantipurinfotech.com/" target="_bank" className="kit">KIT</a> &nbsp;&nbsp;•&nbsp;&nbsp; ©pos, Inc. 2023. All Rights Reserved. &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">Privacy Statement</a> &nbsp;&nbsp; • &nbsp;&nbsp;<a href="">Terms of Service</a>  &nbsp;&nbsp;• &nbsp;&nbsp;<a href="">POS Blog</a></p>
           </div>
       </div>
       <div className="login_wrapper">
@@ -209,7 +209,7 @@ const Signin = () => {
           <div className="flex-row">
             <div className="content">
               <label className="checkBox" style={{boxShadow: `${ server_error.non_field_errors || server_error.tc  ? "0px 0px 0px 1px rgb(255 0 0 / 68%)" :""}`}}>
-                <input id="ch1" type="checkbox" />
+                <input id="ch1" name="tc" type="checkbox" />
                 <div className="transition"></div>
               </label>
               <label>Agree with <Link to="/">Terms and Conditions</Link></label>

@@ -24,10 +24,10 @@ const Sidebar = ({active}) => {
               <Link to="/category" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Category</span>
               </Link>
-              <Link className={style.sidebar_main_link}>
+              <Link to='/sub-category' className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Sub Category</span>
               </Link>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/brand" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Brand</span>
               </Link>
               <Link className={style.sidebar_main_link}>
@@ -88,7 +88,7 @@ const Sidebar = ({active}) => {
           <div className={style.subment_wrapper}>
           <h6>People</h6>
             <span className={style.model}>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/customer" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Customer </span>
               </Link>
               <Link className={style.sidebar_main_link}>
@@ -99,7 +99,7 @@ const Sidebar = ({active}) => {
           <div className={style.subment_wrapper}>
           <h6>HRM</h6>
             <span className={style.model}>
-              <Link className={style.sidebar_main_link}>
+              <Link to="/employee" className={style.sidebar_main_link}>
                 <span className={style.custom_panal}>Employees </span>
               </Link>
               <Link className={style.sidebar_main_link}>
