@@ -13,11 +13,12 @@ class Sales(models.Model):
     grand_total = models.IntegerField(null=True)
     paid = models.IntegerField(null=True)
     due = models.IntegerField(null=True)
+    products = models.ManyToManyField(Products)
     biller = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None)
 
     def __str__(self):
       return f"{self.costumer_name} - {self.status} - {self.biller}"
-    
+
 class SalesReturn(models.Model):
      store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True)
      product_name = models.ForeignKey(Products, null=True , on_delete=models.SET_DEFAULT, default=None)

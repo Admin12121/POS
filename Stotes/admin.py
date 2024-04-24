@@ -24,12 +24,12 @@ class CustomersAdmin(admin.ModelAdmin):
         else:
             return 'No Image'
     display_logo.short_description = 'Profile'
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.stor:
-            group = request.user.stor
-            return qs.filter(store__store_owner__stor__code=group.code)
-        return qs.none()  # Return an empty queryset if user has no associated group
+    # def get_queryset(self, request):
+    #     qs = super().get_queryset(request)
+    #     if request.user.stor:
+    #         group = request.user.stor
+    #         return qs.filter(store__store_owner__stor__code=group.code)
+    #     return qs.none()  # Return an empty queryset if user has no associated group
 
 
 
