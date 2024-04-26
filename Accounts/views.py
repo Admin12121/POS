@@ -178,7 +178,7 @@ class UserProfileView(APIView):
          user = request.user
          
          if user:
-            serializer = UserDataSerializer(user)
+            serializer = UserDataSerializer(user,context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
          else:
             return Response({"detail": "Some thing went wrong user does not exist"}, status=status.HTTP_404_NOT_FOUND)

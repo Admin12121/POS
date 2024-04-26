@@ -54,12 +54,12 @@ class User(AbstractBaseUser):
              verbose_name='Email',
              max_length=255,
              unique=True,
-     )
+     ) 
      profile = models.ImageField(upload_to='profile/', null=True, blank=True,validators=[ FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])] )    
      name = models.CharField(max_length=200,blank=True)
      first_name=models.CharField(max_length=200,blank=True)
      last_name=models.CharField(max_length=200,blank=True)
-     phone=models.CharField(max_length=15,blank=True)
+     phone=models.CharField(max_length=15,unique=True,blank=True)
      dob = models.CharField(max_length=10,null=True, blank=True)
      gender = models.CharField(max_length=10, null=True, blank=True)
      employee_role = models.CharField(max_length=200, blank=True, null=True)

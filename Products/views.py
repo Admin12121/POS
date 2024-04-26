@@ -57,7 +57,7 @@ class CategoryView(APIView):
           serializer = CategorySerializer(category,data=request.data, partial= True)
           if serializer.is_valid():
              serializer.save()
-             return Response({'msg': f'Brand {category_name} updated'}, status=status.HTTP_200_OK)
+             return Response({'msg': f'Category {category_name} updated'}, status=status.HTTP_200_OK)
           return Response({'msg': 'invalid data'}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'msg': 'invalid id'}, status=status.HTTP_403_FORBIDDEN)
@@ -73,40 +73,38 @@ class CategoryView(APIView):
             except Exception as e:
                 return Response({'msg': 'invalid id'}, status=status.HTTP_403_FORBIDDEN)
 
-
 class SubCategoryView(APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-          subcategory = request.query_params.get('name')
           store_code = request.query_params.get('store')
+          store = get_object_or_404(Store, store_code=store_code)
 
-          if store_code and subcategory:
-              # Get the store object by store code
-              store = get_object_or_404(Store, store_code=store_code)
-              # Filter users by store and name
-              category = SubCategory.objects.filter(store=store, name__icontains=subcategory)
-          elif store_code:
-              # Get the store object by store code
-              store = get_object_or_404(Store, store_code=store_code)
-              # Filter users only by store
-              category = SubCategory.objects.filter(store=store)
+          if store_code :
+              subcategory = SubCategory.objects.filter(store=store)
           else:
-              # Handle the case where store_code is not provided
-              category = SubCategory.objects.none()
-          serializer = SubCategorySerializer(category, many=True)
-          return Response(serializer.data, status=status.HTTP_200_OK)
+              subcategory = SubCategory.objects.none()
+
+          categories = Category.objects.filter(store=store)
+        #   serializer = SubCategorySerializer(category, many=True)
+          serializer = {
+            'subcategories': SubCategorySerializer(subcategory, many=True).data,
+            'categories': CategoryListSerializer(categories, many=True).data
+           }
+          return Response(serializer, status=status.HTTP_200_OK)
     
     def post(self, request, format=None):
         serializer = SubCategorySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         store_code = request.data.get('stor_code')
+        cat = request.data.get('category')
         store = get_object_or_404(Store, store_code=store_code)
-
+        category = get_object_or_404(Category, id=cat)
         user = self.request.user
         serializer.validated_data['store'] = store
+        serializer.validated_data['category'] = category 
         serializer.validated_data['createdby'] = user
 
         serializer.save()
@@ -114,29 +112,33 @@ class SubCategoryView(APIView):
    
     def patch(self,request,*args,**kwargs):
       id = request.query_params.get('id')
+      cat = request.data.get('category')
       if id:
         try:
-          subCategory = SubCategory.objects.get(id=id)
-          subCategory_name = subCategory.subCategory
-          serializer = SubCategorySerializer(subCategory,data=request.data, partial= True)
+          subcategory = SubCategory.objects.get(id=id)
+          subcategory_name = subcategory.subcategory
+          serializer = SubCategorySerializer(subcategory,data=request.data, partial= True)
           if serializer.is_valid():
+             if cat:
+                 category = get_object_or_404(Category, id=cat)
+                 serializer.validated_data['category'] = category
              serializer.save()
-             return Response({'msg': f'Brand {subCategory_name} updated'}, status=status.HTTP_200_OK)
+             return Response({'msg': f'Brand {subcategory_name} updated'}, status=status.HTTP_200_OK)
           return Response({'msg': 'invalid data'}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'msg': 'invalid id'}, status=status.HTTP_403_FORBIDDEN)
     
     def delete(self, request, *args, **kwargs):
         id = request.query_params.get('id')
+        print(id)
         if id:
             try:
                 subCategory = SubCategory.objects.get(id=id)
-                subCategory_name = subCategory.subCategory
+                subCategory_name = subCategory.subcategory
                 subCategory.delete()
-                return Response({'msg': f'Brand {subCategory_name} deleted successfully'}, status=status.HTTP_200_OK)
+                return Response({'msg': f'Sub Category {subCategory_name} deleted successfully'}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'msg': 'invalid id'}, status=status.HTTP_403_FORBIDDEN)
-
 
 class BrandView(APIView):
     renderer_classes = [UserRenderer]
@@ -175,11 +177,13 @@ class BrandView(APIView):
     
     def patch(self,request,*args,**kwargs):
       id = request.query_params.get('id')
+      print(id)
       if id:
         try:
           brand = Brand.objects.get(id=id)
           brand_name = brand.brand
           serializer = BrandSerializer(brand,data=request.data, partial= True)
+          print(request.data)
           if serializer.is_valid():
              serializer.save()
              return Response({'msg': f'Brand {brand_name} updated'}, status=status.HTTP_200_OK)
@@ -203,7 +207,11 @@ class ProductsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        store = request.data.get('store_id')
+        serializer = ProductsSerializer(data=request.data)
+        store = request.data.get('stor_code')
+        cat = request.data.get('category')
+        subcat = request.data.get('subcategory')
+        bran = request.data.get('brand')
         user = self.request.user
 
         try:
@@ -211,9 +219,12 @@ class ProductsView(APIView):
         except Store.DoesNotExist:
             return Response({'error':'Store does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         
-        serializer = ProductsSerializer(data=request.data)
+        brand = get_object_or_404(Brand, id=bran)
+        subcategory = get_object_or_404(SubCategory, id=subcat)
+        category = get_object_or_404(Category, id=cat)
+        
         if serializer.is_valid(raise_exception=True):
-           serializer.save(store = store, createdby = user)
+           serializer.save(store = store ,category=category ,brand=brand ,subcategory=subcategory , createdby = user)
            return Response({'msg':'Product Saved'}, status=status.HTTP_200_OK)
         else: 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -238,5 +249,55 @@ class ProductsView(APIView):
           serializer = ProductsSerializer(product, many=True,context={'request': request})
           return Response(serializer.data, status=status.HTTP_200_OK)
     
+    def delete(self, request, *args, **kwargs):
+        id = request.query_params.get('id')
+        if id:
+            try:
+                product = Products.objects.get(id=id)
+                product_name = product.product_name
+                product.delete()
+                return Response({'msg': f'{product_name} is deleted successfully'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'msg': 'invalid id'}, status=status.HTTP_403_FORBIDDEN)
 
+class ForeignKeyView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+          store_code = request.query_params.get('store')
+          store = get_object_or_404(Store, store_code=store_code)
+
+          categories = Category.objects.filter(store=store)
+          subcategory = SubCategory.objects.filter(store = store)
+          brand = Brand.objects.filter(store = store)
+          unit_choices = [
+            {"unit":'Kg'},
+            {"unit":'Pc'},
+        ]
+          serializer = {
+            'subcategories': SubCategoryListSerializer(subcategory, many=True).data,
+            'brand': BrandListSerializer(brand, many=True).data,
+            'categories': CategoryListSerializer(categories, many=True).data,
+            'unit_choices': unit_choices,
+           }
+          return Response(serializer, status=status.HTTP_200_OK)
+ 
+class ExpiredProductView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+          store_code = request.query_params.get('store')
+
+          if store_code:
+              # Get the store object by store code
+              store = get_object_or_404(Store, store_code=store_code)
+              # Filter users only by store
+              product = Products.objects.filter(store = store, manuf_date__isnull=False, exp_date__isnull=False)
+          else:
+              # Handle the case where store_code is not provided
+              product = Products.objects.none()
+          serializer = ProductsSerializer(product, many=True,context={'request': request})
+          return Response(serializer.data, status=status.HTTP_200_OK)
  

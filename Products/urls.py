@@ -7,4 +7,5 @@ urlpatterns = [
     path('subcategory/', SubCategoryView.as_view(), name='subcategory'),
     path('brand/', BrandView.as_view(), name='brand'),
     path('products/', ProductsView.as_view(), name='products'),
+    path('foreignkey/', ForeignKeyView.as_view(), name='foreignkey_view'),
 ]

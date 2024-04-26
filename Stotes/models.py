@@ -12,8 +12,13 @@ def generate_random_code():
 # Create your models here.
 
 class Store(models.Model):
+    CATEGORY=(
+        ('Restront','Restront'),
+        ('Store', 'Store'),
+    )
     name = models.CharField(max_length=100, null=True)
     store_owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    store_type = models.CharField(max_length=100, choices=CATEGORY, null=True, blank=True)
     store_code = models.CharField(max_length=20, null=True, blank=True)
     def generate_store_code(self):
         # Generate a random string of uppercase letters and digits
@@ -57,7 +62,7 @@ class Department(models.Model):
 
 class Customers(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
-    profile = models.ImageField(upload_to='profile/', null=True, blank=True,validators=[ FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])] )
+    profile = models.ImageField(upload_to='customer_profile/', null=True, blank=True,validators=[ FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])] )
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=15, null=True)

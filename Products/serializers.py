@@ -2,10 +2,14 @@ from rest_framework import serializers
 from .models import *
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Category
         fields = "__all__"
+
+class CategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'category']
 
 class SubCategorySerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(read_only=True, slug_field='category')
@@ -13,6 +17,11 @@ class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
         fields = "__all__"
+
+class SubCategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ['id', 'subcategory']
 
 class BrandSerializer(serializers.ModelSerializer):
     logo = serializers.ImageField()
@@ -26,6 +35,24 @@ class BrandSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.logo.url)
         return None
 
+class BrandListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ['id', 'brand']
+
+class UnitSerializer(serializers.Serializer):
+    UNIT_CHOICES = [
+        ('Kg', 'Kg'),
+        ('Pc', 'Pc'),
+    ]
+    unit = serializers.ChoiceField(choices=UNIT_CHOICES)
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product_images
+        fields = ['preview_image']
+
+
 class ProductsSerializer(serializers.ModelSerializer):
     images = serializers.ImageField()
     category = serializers.SlugRelatedField(read_only=True, slug_field='category')
@@ -33,6 +60,7 @@ class ProductsSerializer(serializers.ModelSerializer):
     subcategory = serializers.SlugRelatedField(read_only=True, slug_field='subcategory')
     createdby = serializers.SlugRelatedField(read_only=True, slug_field='first_name')
     profile = serializers.SerializerMethodField()
+    product_images = ProductImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Products
@@ -50,3 +78,4 @@ class ProductsSerializer(serializers.ModelSerializer):
             if request is not None:
                 return request.build_absolute_uri(obj.images.url)
         return None
+

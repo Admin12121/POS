@@ -11,7 +11,7 @@ class Util:
             to_email = data['to_email']
             
             # Using config function from decouple to read environment variables
-            from_email = config('EMAIL_FROM')
+            from_email = config('EMAIL_HOST_USER')
 
             if not all([subject, body, to_email, from_email]):
                 raise ValueError("Incomplete email data")
