@@ -1,0 +1,265 @@
+.employee_wrapper{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    gap: 15px;
+    // justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 15px;
+    .employee_card{
+        width: 24%;
+        height: 350px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        justify-content: space-between;
+        gap: 10px;
+        border: 1px solid #12121217;
+        position: relative;
+
+        @media (max-width:1400px) {
+            width: 32%;
+        }
+        @media (max-width:1100px) {
+            width: 48%;
+        }
+        @media (max-width:560px) {
+            width: 100%;
+        }
+        .header_{
+              display: flex;
+              align-items: center;
+              justify-content: end;
+              height: 20px;
+              .action{
+                display: flex;
+                gap: 20px;
+                .active{
+                    color: #28C76F;
+                    padding: 1px 7px;
+                    font-size: 13px;
+                    border-radius: 7px;
+                    border: 1px solid #28C76F;
+                }
+                .Editing_option{
+                    display: flex;
+                    background-color: rgb(255, 255, 255);
+                    position: absolute;
+                    right: 10px;
+                    gap: 5PX;
+                    top: 35px;
+                    flex-direction: column;
+                    padding: 5px 15px;
+                    border-radius: 6px;
+                    font-size: 14px;
+                    border: 1px solid #12121243;
+                    p{
+                        cursor: pointer;
+                        display: flex;
+                        gap: 5px;
+                        align-items: center;
+                        &:hover{
+                            color: var(--primary-color);
+                        }
+                        &:nth-child(2){
+                            &:hover{
+                                color: red;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .employee_{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 10px;
+            gap: 5px;
+            line-height: 100%;
+            img{
+                object-fit: cover;
+                object-position: center;
+                width: 90px;
+                height: 90px;
+                border-radius: 8px;
+            }
+            h2{
+                font-size: 15px;
+                font-weight: 400;
+                color: #ff9f43;
+            }
+            h1{
+                font-size: 20px;
+                font-weight: 500;
+            }
+            h3{
+                font-size: 13px;
+                font-weight: 400;
+            }
+        }
+        .employee_details{
+            width: 100%;
+            height: 100px;
+            border-radius: 7px;
+            background-color: #f3f6f9;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+
+            h1{
+                font-size: 15px;
+                font-weight: 400;
+            }
+            span{
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+            }
+        }
+    }
+
+}
+
+.inputForm.border-1.border-red-700 {
+    border: 1px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 0.25em;
+    position: absolute;
+    bottom: -10px;
+}
+
+.flex-column{
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    padding: 10px;
+    position: relative;
+    .Image_Uploader{
+        .custum-file-upload {
+          height: 100px;
+          width: 120px;
+          display: flex;
+          flex-direction: column;
+          align-items: space-between;
+          background-position: center;
+          background-size: 120px;
+          cursor: pointer;
+          align-items: center;
+          justify-content: center;
+          border: 2px dashed #cacaca;
+          background-color: rgba(255, 255, 255, 1);
+          padding: 1rem;
+          gap: 10px;
+          border-radius: 10px;
+          box-shadow: 0px 48px 35px -48px rgba(0,0,0,0.1);
+        }
+        
+        .custum-file-upload .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .custum-file-upload .text {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+        }
+        
+        .custum-file-upload .text span {
+          font-weight: 400;
+          color: rgba(75, 85, 99, 1);
+        }
+        
+        .custum-file-upload input {
+          display: none;
+        }
+    }
+}
+
+.Cutomer_form{
+    position: absolute;
+    background-color: #1212126b;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    form{
+        overflow: hidden;
+        overflow-y: auto;
+        position: relative;
+        height: 650px;
+        width: 650px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        border-radius: 8px;
+        background-color: #fff;
+        &::-webkit-scrollbar {
+        display: none; 
+        }
+        .close_button{
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            right: 0;
+            padding: 0 10px;
+            color: red;
+        }
+        .flex-row{
+            gap: 0;
+            button{
+                border: none;
+                padding: 4px 15px;
+                height: 35px;
+                cursor: pointer;
+                color: #fff;
+                border-radius: 7px;
+                &:nth-child(1){
+                    background: #424b5296;
+                    &:hover{
+                      background: #424b52;
+                    }
+                   }
+                   &:nth-child(2){
+                    background: var(--primary-color);
+                    &:hover{
+                      background: var(--primary-color);
+            }
+        }
+            }
+        }
+        .flex-column{
+            width: 47%;
+            position: relative;
+            .custum-file-upload{
+                height: 80px;
+                width: 80px;
+            }
+        }
+        .inputForm{
+            height: 40px;
+            overflow: hidden;
+            textarea{
+                height: 100%;
+                min-height: unset;
+            }
+        }
+
+    }
+}

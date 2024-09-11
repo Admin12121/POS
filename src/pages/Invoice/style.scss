@@ -1,0 +1,162 @@
+.invoice_wrapper{
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    position: absolute;
+    left: 0;
+    background-color: #12121287;
+    z-index: 999999999999999999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .main_invoice{
+        width: 90%;
+        height: 90%;
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        overflow-y: auto;
+        gap: 20px;
+        &::-webkit-scrollbar{
+            display: none;
+        }
+        .invoice_header{
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            span{
+                display: flex;
+                align-items: center;
+            }
+            .action_buttons {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                flex-wrap: wrap;
+    
+                .small_button {
+                    display: flex;
+                    gap: 10px;
+    
+                    .quick_action {
+                        height: 38px;
+                        cursor: pointer;
+                        width: 38px;
+                        display: -webkit-box;
+                        display: -ms-flexbox;
+                        display: flex;
+                        align-items: center;
+                        -webkit-box-align: center;
+                        -ms-flex-align: center;
+                        justify-content: center;
+                        -webkit-justify-content: center;
+                        -ms-flex-pack: center;
+                        border: 1px solid #e8ebed;
+                        background: #ffffff;
+                        border-radius: 8px;
+                        padding: 6px;
+    
+                        svg {
+                            width: 14px;
+                            height: 14px;
+                        }
+                    }
+                }
+            }
+        }
+        .customer_over_view{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            width: 100%;
+            @media (max-width:900px) {
+                flex-direction: column;
+                align-items: start;
+                gap: 20px;
+            }
+            .view{
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                h1{
+                    font-size: 16px;
+                }
+            }
+        }
+        .invoice_calculation{
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: end;
+            padding: 0 20px;
+            .final_invoice{
+                width: 370px;
+                background-color: #f3f6f9;
+                padding: 5px 10px;
+                .table-borderless {
+                    margin-top: 10px;
+                    font-size: 14px;
+                    border-collapse: collapse;
+                    width: 100%;
+                    caption-side: bottom;
+                  
+                    th,
+                    td {
+                      padding: 5px;
+                      text-align: start;
+                    }
+                    .text-end{
+                        text-align: end;
+                    }
+                  
+                    th {
+                      border-top: 1px dashed #0000007b;
+                      border-bottom: 1px dashed #0000007b;
+                    }
+                    
+                    .last_table {
+                        border-top: 1px dashed #0000007b;
+                        border-bottom: 1px dashed #0000007b;
+                    }
+                    .final_amt{
+                        font-weight: 650;
+                        button{
+                            padding: 5px 10px;
+                            border-radius: 5px;
+                            border: none;
+                            background-color: #28c76f;
+                            cursor: pointer;
+                            color: #fff;
+                            margin: 5px;
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+.status_hold{
+    background-color: #fff0f0;
+    color: red;
+    padding: 5px 8px;
+    border-radius: 7px;
+}
+
+.status_paid{
+    background-color: #28c76f;
+    color: #fff;
+    padding: 5px 8px;
+    border-radius: 7px;
+}
+.hover_{
+    // color: green;
+    &:hover{
+        color: var(--primary-color);
+    }
+}

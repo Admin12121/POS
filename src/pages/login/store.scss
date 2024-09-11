@@ -1,0 +1,32 @@
+.Create_store{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .form{
+        scale: .9;
+        width: 650px;
+        display: flex;
+        align-items: center;
+        background-color: var(--message-box-border);
+
+        .flex-column{
+            width: 100%;
+            .inputForm{
+                background: var(--app-container);
+                gap: 15px;
+            }
+        }
+        .flex-row{
+            display: flex;
+            justify-content: space-between;
+            padding: 0;
+        }
+        button{
+            height: 50px;
+        }
+    }
+}
+
+

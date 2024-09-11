@@ -1,0 +1,180 @@
+
+.wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    display: flex;
+    gap: 20px;
+    background-color: #fafbfe;
+    flex-direction: column;
+    padding: 20px;
+    &::-webkit-scrollbar{
+        display: none;
+    }
+
+    .header_wrapper_ {
+        height: 40px;
+        font-size: 11px;
+        line-height: 130%;
+    }
+
+    .form_wrapper {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        border: 1px solid #12121212;
+        justify-content: space-between;
+        .profile-picture_ {
+            height: 200px;
+            width: 100%;
+            position: relative;
+
+            .user_details {
+                position: absolute;
+                z-index: 99;
+                left: 20px;
+                display: flex;
+                top: 70px;
+                align-items: center;
+                gap: 20px;
+
+                img {
+                    border-radius: 50%;
+                    padding: 5px;
+                    border: 1px solid #12121212;
+                    background-color: #fff;
+                    height: 100px;
+                    object-fit: cover;
+                    width: 100px;
+                }
+
+                .profile_text_ {
+                    line-height: 150%;
+                    font-size: 12px;
+                }
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                border-radius: 8px 8px 0 0;
+                width: 100%;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 90px;
+                background: rgb(216, 113, 17);
+                background: linear-gradient(90deg,
+                        rgba(216, 113, 17, 1) 0%,
+                        rgba(212, 100, 36, 1) 56%,
+                        rgba(0, 212, 255, 1) 100%);
+            }
+        }
+
+        .flex-row{
+
+            .flex-column{
+                width: 49%;
+                @media (max-width:850px) {
+                    width: 100%;
+                }
+            }
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #fff;
+            &:nth-child(odd) {
+                background-color: var(--primary-color);
+            }
+        
+            &:nth-child(even) {
+                background-color: #424b52;
+            }
+        }
+    }
+}
+
+
+/* From Uiverse.io by njesenberger */ 
+.toggle-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: .5em;
+    padding: .125em;
+    background-image: linear-gradient(to bottom, #d5d5d5, #e8e8e8);
+    box-shadow: 0 1px 1px rgb(255 255 255 / .6);
+    /* resize for demo */
+    font-size: 1.5em;
+  }
+  
+  .toggle-checkbox {
+    appearance: none;
+    position: absolute;
+    z-index: 1;
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    /* fix em sizing */
+    font: inherit;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    border-radius: .375em;
+    width: 3em;
+    height: 1.5em;
+    background-color: #e8e8e8;
+    box-shadow: inset 0 0 .0625em .125em rgb(255 255 255 / .2), inset 0 .0625em .125em rgb(0 0 0 / .4);
+    transition: background-color .4s linear;
+  }
+  
+  .toggle-checkbox:checked + .toggle-container {
+    background-color: #f3b519;
+  }
+  
+  .toggle-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: .0625em;
+    border-radius: .3125em;
+    width: 1.375em;
+    height: 1.375em;
+    background-color: #e8e8e8;
+    box-shadow: inset 0 -.0625em .0625em .125em rgb(0 0 0 / .1), inset 0 -.125em .0625em rgb(0 0 0 / .2), inset 0 .1875em .0625em rgb(255 255 255 / .3), 0 .125em .125em rgb(0 0 0 / .5);
+    transition: left .4s;
+  }
+  
+  .toggle-checkbox:checked + .toggle-container > .toggle-button {
+    left: 1.5625em;
+  }
+  
+  .toggle-button-circles-container {
+    display: grid;
+    grid-template-columns: repeat(3, min-content);
+    gap: .125em;
+    position: absolute;
+    margin: 0 auto;
+  }
+  
+  .toggle-button-circle {
+    border-radius: 50%;
+    width: .125em;
+    height: .125em;
+    background-image: radial-gradient(circle at 50% 0, #f5f5f5, #c4c4c4);
+  }

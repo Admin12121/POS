@@ -1,0 +1,81 @@
+.staff_dashboard_wrapper{
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    
+    .staff_nav_{
+        display: flex;
+        background: #f7f8fa;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        height: 100%;
+        border-radius: 8px;
+        gap: 10px;
+        flex-wrap: wrap;
+        .welcome{
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            h1{
+                font-size: 14px;
+
+            }
+            p{
+                font-size: 12px;
+            }
+        }
+        ._cos_nav_action_button{
+            display: flex;
+            gap: 10px;
+            .nav_date_item{
+                border-radius: 8px;
+                padding: 5px 8px;
+                font-size: 14px;
+                border: 1px solid #12121223;
+            }
+        }
+    }
+    .card_box{
+        height: 100%;
+        width: 100%;
+        display: flex;
+        gap: 25px;
+        padding: 15px;
+        
+        .card_main{
+            height: 110px;
+            border-radius: 8px;
+            width: 52%;
+            background: #f7f8fb;
+        }
+        .card_wrapper{
+            width: 45%;
+            display: flex;
+            gap: 25px;
+            .card{
+                height: 110px;
+                width: 50%;
+                border-radius: 8px;
+                background: #092c4c;
+                &:nth-child(2){
+                background: #ff9f43;
+                }
+            }
+        }
+        @media (max-width:900px) {
+            flex-wrap: wrap;
+            .card_main,.card_wrapper{
+                width: 100%;
+            }}
+        @media (max-width:540px) {
+            .card_wrapper{
+              flex-wrap: wrap;
+                .card{
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

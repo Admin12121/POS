@@ -1,0 +1,96 @@
+.sidebar_wrapper {
+    width: 260px;
+    min-width: 260px;
+    height: 92vh;
+    z-index: 999;
+    overflow: scroll;
+    overflow-x: hidden;
+    border-right: 1px solid #1212121d;
+    display: flex;
+    padding: 24px 24px 24px 24px;
+    background-color: #fff;
+    transition: .5s ease-in-out;
+    &::-webkit-scrollbar {
+        width: 5px; /* Width of the scrollbar */
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #ff9f43; /* Color of the scrollbar handle */
+        border-radius: 1px; /* Rounded corners */
+      }
+    .sidebar_menu {
+        width: 100%;
+        height: 100%;
+
+        // background-color: orange;
+        .subment_wrapper {
+            padding: 10px 0;
+            border-bottom: 1px solid #e8ebed;
+
+            .main_panal {
+                background-color: #f9f1eb;
+                border-radius: 5px;
+                color: #ff9f43;
+                height: 35px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                padding: 15px;
+                font-size: 15px;
+                cursor: pointer;
+            }
+
+            h6 {
+                font-weight: 600;
+                font-size: 14px;
+                color: #1b2950;
+                margin: 0 0 14px 0;
+            }
+
+            .model{
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+
+                .sidebar_main_link {
+                    border-radius: 5px;
+                    height: 35px;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding: 15px 20px;
+                    font-size: 15px;
+                    color: #5b6670;
+                    cursor: pointer;
+                    &:hover{
+                        color: #ff9f43;
+                        background-color: #f9f1eb;
+                    }
+                    .custom_panal{
+                        white-space: nowrap;
+                        font-size: 14px;
+                    }
+                }
+            }
+
+        }
+    }
+
+    @media (max-width:990px) {
+        position: absolute;
+        left: -300px;
+        transition: .5s ease-in-out;
+    }
+}
+
+#mini_mini{
+    position: relative;
+    @media (max-width:990px) {
+        position: absolute;
+        left: 0px;
+    }
+    @media (max-width:500px) {
+        width: 100vw;
+    }
+
+}

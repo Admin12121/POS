@@ -1,0 +1,44 @@
+export interface Product {
+    id: number;
+    images: string;
+    category: string;
+    brand: string;
+    subcategory: string;
+    subsubcategory: string;
+    createdby: string;
+    profile: string | null;
+    product_images: { preview_image: string }[];
+    varient: { id: number; name: string; product: number }[];
+    varient_names: { id: number; varient_category: string; name: string; product: number }[];
+    varient_data: {
+      id: number;
+      varient: { id: number; varient_category: string; name: string; product: number }[];
+      name: string | null;
+      quantity: number;
+      price: number;
+      quantity_alert: number;
+      manuf_date: string | null;
+      exp_date: string | null;
+      discount_type: string | null;
+      discount_value: number | null;
+      product: number;
+    }[];
+    product_name: string;
+    slug: string;
+    sku: string;
+    unit: string;
+    barcode: string;
+    itemcode: string;
+    description: string;
+    single: boolean | null;
+    variable: boolean | null;
+    quantity: number | null;
+    price: number | null;
+    tax_type: string | null;
+    discount_type: string | null;
+    discount_value: number | null;
+    quantity_alert: number | null;
+    manuf_date: string | null;
+    exp_date: string | null;
+    store: number;
+  }
