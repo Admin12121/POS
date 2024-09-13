@@ -7,6 +7,8 @@ import { useDashboardData } from "@/pages/dashboard/Dashboard";
 import {
   useForeignkeyViewQuery,
   useProductsRegistrationMutation,
+  useUnitViewQuery,
+  useAddUnitMutation
 } from "@/fetch_Api/service/user_Auth_Api";
 import { CiCircleChevDown } from "react-icons/ci";
 import TextQuill from "@/components/textQuill";
@@ -14,6 +16,31 @@ import MultiImageUploader from "@/pages/Inventory/MultiImageUploader";
 import { MdDeleteOutline } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { IoAddOutline } from "react-icons/io5";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import Spinner from "@/components/ui/spinner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+
+const unitSchema = z.object({
+  unit: z.string().min(1, "Unit is required"),
+});
+
+type UnitFormData = z.infer<typeof unitSchema>;
 
 interface Data {
   brand: { id: number; brand: string }[];
@@ -47,10 +74,18 @@ const CreateProduct = () => {
   const [error, setError] = useState<any>("");
   const menuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const alertDialogCancelRef = useRef<HTMLButtonElement>(null);
   const { data, refetch } = useForeignkeyViewQuery({storeCode}, {skip: !storeCode}) as {
     data: Data;
     refetch: () => void;
   };
+  const [page, setPage] = useState(1); 
+  const { data: unitData, isLoading: isFetching , refetch: unitRefetch } = useUnitViewQuery({storeCode, page}, {skip: !storeCode}) as {
+    data: any;
+    refetch: () => void;
+    isLoading: boolean;
+  };
+  const [unitdata, setUnitData] = useState<any[]>([]);
   const [categoryquery, setCateQuery] = useState<{
     id: number | null;
     category: string;
@@ -95,6 +130,33 @@ const CreateProduct = () => {
   const taxty = [{ type: "Sales Tax" }, { type: "Exclusive" }];
 
   useEffect(() => {
+    if (unitData ) {
+      if(unitdata.length === 0){
+        setUnitData(unitData?.results);
+      }
+    }
+  }, [unitData]);
+
+  const fetchMoreUnits = async () => {
+    if(unitData.next  && !isFetching){
+      setPage(page + 1);
+    }
+  };
+  
+  useEffect(() => {
+    if(page > 1){
+      setUnitData([...unitdata, ...unitData?.results]);
+    }
+  }, [unitData])
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollHeight - scrollTop - 10 <= clientHeight) {
+      fetchMoreUnits();
+    }
+  };
+
+  useEffect(() => {
     if (userData) {
       setStoreCode(userData.stor.code);
     }
@@ -136,6 +198,37 @@ const CreateProduct = () => {
       };
       reader.readAsDataURL(selectedImage);
       setLogFile(selectedImage);
+    }
+  };
+
+  const [addUnit, {isLoading}] = useAddUnitMutation();
+
+  const {
+    register: unitRegister,
+    handleSubmit: handleUnitSubmit,
+    reset: resetUnitForm,
+  } = useForm<UnitFormData>({
+    resolver: zodResolver(unitSchema),
+  });
+
+  const handleUnit = async (data: UnitFormData) => {
+    const formData = new FormData();
+    formData.append("stor_code", storeCode);
+    formData.append("unit", data.unit);
+    const res = await addUnit({ storeCode, actualData: formData});
+    if (res.data) {
+      toast.success(res.data.msg, {
+        action: {
+          label: "X",
+          onClick: () => toast.dismiss(),
+        },
+      });
+      alertDialogCancelRef.current?.click();
+      unitRefetch();
+      resetUnitForm();
+    }
+    if (res.error && "data" in res.error) {
+      setError(res.error.data);
     }
   };
 
@@ -660,30 +753,56 @@ const CreateProduct = () => {
                   <label>
                     Unit <span className="important_mean_red">*</span>
                   </label>
-                  <div className="inputForm" onClick={() => handleDropdown(3)}>
-                    <div className="input_form">{ubitquery}</div>
-                    <svg
-                      style={{ rotate: "-90deg" }}
-                      width="24px"
-                      height="24px"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M15.5 19C15.5 19 8.5 14.856 8.5 12C8.5 9.145 15.5 5 15.5 5"
-                        stroke="#000000"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                  <div className=" flex w-full gap-2">
+                    <div className="inputForm" onClick={() => handleDropdown(3)}>
+                      <div className="input_form">{ubitquery}</div>
+                      <svg
+                        style={{ rotate: "-90deg" }}
+                        width="24px"
+                        height="24px"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M15.5 19C15.5 19 8.5 14.856 8.5 12C8.5 9.145 15.5 5 15.5 5"
+                          stroke="#000000"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                             <span className="cursor-pointer p-2 rounded-md bg-orange-500"><IoAddOutline color="white" size={32}/></span>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Add Unit</AlertDialogTitle>
+                            <AlertDialogDescription>
+                            <form>
+                              <div className="grid w-full items-center gap-4">
+                                <div className="flex flex-col space-y-1.5">
+                                  <Label htmlFor="name">Name of the Unit</Label>
+                                  <Input id="name" placeholder="Unit" {...unitRegister("unit")}/>
+                                </div>
+                              </div>
+                            </form>
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel  ref={alertDialogCancelRef}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleUnitSubmit(handleUnit)}>{isLoading ? <Spinner/> : "Add"}</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>                    
                   </div>
                   {drop[3] && (
-                    <div className="option_wrapper" ref={menuRef}>
-                      {data &&
-                        data.unit_choices.map(({ unit }) => (
-                          <div className="drop-down" key={unit}>
+                    <div className="option_wrapper" ref={menuRef} onScroll={(e:any)=>handleScroll(e)}>
+                      {unitdata &&
+                        unitdata.map(({ id, unit }:{id:number, unit:string}) => (
+                          <div className="drop-down" key={id}>
                             <span
                               onClick={() => {
                                 setUnitQuery(unit);
@@ -698,6 +817,7 @@ const CreateProduct = () => {
                             </span>
                           </div>
                         ))}
+                    {isFetching && <Spinner />}                        
                     </div>
                   )}
                 </div>

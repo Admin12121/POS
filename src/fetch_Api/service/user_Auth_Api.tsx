@@ -5,6 +5,18 @@ export const userAuthapi = createApi({
   reducerPath: "userAuthapi",
   baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_KEY_BACKEND_DOMAIN}/` }),
   endpoints: (builder) => ({
+    notification: builder.query({
+      query: () => {
+        const {access_token} = getToken();
+        return {
+          url: "notification/",
+          method: "GET",
+          headers: {
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
+    }),
     registerUser: builder.mutation({
       query: (user) => {
         const {access_token} = getToken();
@@ -537,6 +549,31 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    unitView: builder.query({
+      query: ({storeCode,page}) => {
+        const { access_token } = getToken();
+        return {
+          url: `products/unit/${storeCode}/?page=${page}`,
+          method: "GET",
+          headers: {
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
+    }),    
+    addUnit: builder.mutation({
+      query: ({storeCode, actualData}) => {
+        const { access_token } = getToken();
+        return {
+          url: `products/unit/${storeCode}/`,
+          method: "POST",
+          body: actualData,
+          headers: {
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
+    }),    
     customerView: builder.query({
       query: ({storeCode, search, page}) => {
         const { access_token } = getToken();
@@ -687,10 +724,10 @@ export const userAuthapi = createApi({
       },
     }),
     creditsData: builder.query({
-      query: ({storeCode,code}) => {
+      query: ({storeCode,code, page, pageSize, search, filter}) => {
         const { access_token } = getToken();
         return {
-          url: `sales/credits/?store=${storeCode}${code ? `&code=${code}` : ``}`,
+          url: `sales/credits/${storeCode}/?page=${page}&page_size=${pageSize}${search ? `&search=${search}`: ""}${filter ? `&filter=${filter}` : ""}${code ? `?code=${code}` : ``}`,
           method: "GET",
           headers: {
             authorization: `Bearer ${access_token}`,
@@ -728,6 +765,7 @@ export const userAuthapi = createApi({
 });
 
 export const {
+  useNotificationQuery,
   useRegisterUserMutation,
   useRegisterAdminMutation,
   useLoginUserMutation,
@@ -770,6 +808,8 @@ export const {
   useUpdateBrandMutation,
   useDeleteBrandMutation,
   useForeignkeyViewQuery,
+  useUnitViewQuery,
+  useAddUnitMutation,
   useCustomerViewQuery,
   useAddcustomerMutation,
   useUpdatecustomerMutation,

@@ -1,11 +1,12 @@
-import  { useState,useEffect, useRef } from "react";
+import  { useState,useEffect } from "react";
 import {Link,useNavigate} from "react-router-dom"
 import styles from "./style.module.scss";
 import { useDispatch } from "react-redux";
 import {toast } from 'sonner';
 import { unSetUserToken } from '../../fetch_Api/feature/authSlice';
-import { removeToken } from '../../fetch_Api/service/localStorageServices';
-import { parseISO, formatDistanceToNow } from 'date-fns';
+import { removeToken, getToken } from '../../fetch_Api/service/localStorageServices';
+import { useNotificationQuery } from "../../fetch_Api/service/user_Auth_Api";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,15 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+import {
+  Card,
+} from "@/components/ui/card"
 
 interface User {
   profile: string;
@@ -31,6 +41,7 @@ interface User {
 
 interface Notification {
   id: number;
+  title: string;
   message: string;
   seen: boolean;
   created_at: string;
@@ -40,22 +51,21 @@ interface NavbarProps {
   user: User;
   bar: (prev: boolean) => void;
   active: boolean;
-  notifications: Notification[];
-  markAsSeen?: (id: number) => void;
-}
-
-interface HandelNotificationProps {
-  notifications: Notification[];
-  setnot: (value: boolean) => void;
-  markAsSeen?: (id: number) => void;
 }
 
 
-const Navbar: React.FC<NavbarProps> = ({user, bar, active,notifications,markAsSeen}) => {
+const Navbar: React.FC<NavbarProps> = ({user, bar, active}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [not, setnot] = useState(false)
-  const [notie , setNotie ] = useState(false);
+  const [notification, setNotifications] = useState<Notification[]>([]);
+  const {data:notificationData} = useNotificationQuery({});
+
+  useEffect(()=>{
+    if(notificationData){
+      setNotifications(notificationData.results)
+    }
+  },[notificationData])
+
   const handleLogout = () => {
     dispatch(unSetUserToken({ access_token: null }));
     removeToken();
@@ -66,15 +76,34 @@ const Navbar: React.FC<NavbarProps> = ({user, bar, active,notifications,markAsSe
         onClick: () => toast.dismiss(),
       },})
   };
-  const unseenNotificationsCount = notifications.filter(notification => !notification.seen).length;
+  // const unseenNotificationsCount = notifications.filter(notification => !notification.seen).length;
+
+  const { access_token } = getToken();
 
   useEffect(() => {
-    if (unseenNotificationsCount > 0) {
-      setNotie(true);
-    } else {
-      setNotie(false);
-    }
-  }, [notifications]); 
+    const socket = new WebSocket(
+      `ws://localhost:8000/ws/notifications/?token=${access_token}`
+    );
+    socket.onopen = () => {
+      console.log('WebSocket connection opened');
+    };
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const notification = JSON.parse(data.message);
+      toast.success(notification.title);
+      setNotifications((prevNotifications) => [...prevNotifications, notification]);
+    };
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+    // socket.onerror = (error:any) => {
+    //   // toast.success("Error on Notification");
+    //   // console.error('WebSocket error:', error);
+    // };
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   return (
 
@@ -121,12 +150,23 @@ const Navbar: React.FC<NavbarProps> = ({user, bar, active,notifications,markAsSe
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                 </Link>
             </span>
-            <span className={styles.nav_item} onClick={()=>setnot(prev => !prev)}>
-                <span className={styles.icon_links}>
-                  {notie && <span className={styles.pop}> {unseenNotificationsCount} </span>}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <Popover>
+              <PopoverTrigger>
+                <span className={styles.nav_item}>
+                  <span className={styles.icon_links}>
+                    <IoMdNotificationsOutline size={20}/>
+                  </span>
                 </span>
-            </span>
+              </PopoverTrigger>
+              <PopoverContent>
+                {notification.map((notification:Notification)=>(
+                  <Card key={notification.id} className="flex flex-col gap-1">
+                    <h1>{notification.title}</h1>
+                    <p>{notification.message}</p>
+                  </Card>
+                ))}
+              </PopoverContent>
+            </Popover>            
             <span className={styles.nav_item}>
                 <Link to='/' className={styles.icon_links}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -153,43 +193,8 @@ const Navbar: React.FC<NavbarProps> = ({user, bar, active,notifications,markAsSe
           </DropdownMenu>
         </div>
       </div>
-      {not && <Handel_notification setnot={setnot} notifications={notifications} markAsSeen={markAsSeen}/>}
     </div>
   );
 };
-
-
-const Handel_notification: React.FC<HandelNotificationProps> = ({ notifications, setnot, markAsSeen }) => {
-  const notificationRef = useRef<HTMLDivElement>(null);
-
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
-      setnot(false);
-    }
-  };
-
-
-  return(
-    <>
-      <div ref={notificationRef} className={styles.notification}>
-       <span className={styles.notification_header}> <h1>Notifications</h1> <p>clear all x</p></span>
-          {notifications.map((notification, index) => (
-            <div onClick={() => markAsSeen ? markAsSeen(notification.id) : null} key={index} className={styles.notification_data} style={{background:`${notification.seen ? "" : "var(--primary-color)"}`,color:`${notification.seen ? "" : "#fff"}`}}>
-              <p>{notification.message}</p>
-              <p>{formatDistanceToNow(parseISO(notification.created_at))} ago</p>
-            </div>
-          ))}
-      </div>
-    </>
-  )
-}
 
 export default Navbar;

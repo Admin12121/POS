@@ -13,7 +13,12 @@ const Credits = () => {
     const { userData } = useDashboardData();
     const [storeCode, setStoreCode]  = useState("");
     const [code, serCustomer] = useState<any>()
-    const {data, refetch } = useCreditsDataQuery({storeCode, code},{skip: !storeCode});
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [search, setSearch] = useState('');
+    const [filter, _setFilter] = useState('');
+    const [loader, setLoader] = useState(false);
+    const {data, refetch } = useCreditsDataQuery({storeCode, code, page, pageSize, search, filter},{skip: !storeCode});
     const [add, setAdd] = useState('');
     
     useEffect(()=>{
@@ -107,7 +112,7 @@ const Credits = () => {
             selector: (row:any) => row.action,
         },
       ]
-      const table_data = data ? data.map(({id,invoice_no,costumer_name,customer_code,created,grand_total,biller,status,paid,due}:any)=>({
+      const table_data = data ? data.results.map(({id,invoice_no,costumer_name,customer_code,created,grand_total,biller,status,paid,due}:any)=>({
         id:id,
         invoiceno: invoice_no,
         customer : <p className="hover_" onClick={()=>{serCustomer(customer_code);}} style={{cursor:"pointer"}}>{costumer_name}</p>,
@@ -137,6 +142,19 @@ const Credits = () => {
 
     })) :[
     ]
+
+    const handleSearch = (() => {
+      let timeout: ReturnType<typeof setTimeout>;
+      return (e: any) => {
+        setLoader(true);
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          setSearch(e.target.value);
+          setLoader(false);
+        }, 1000);
+      };
+    })();
+
   return (
     <>
           <div className={style.main_products_wrapper}>
@@ -201,7 +219,10 @@ const Credits = () => {
             <div className={style.table_controls}>
                 <div className={style.main_theme}>
                     <span className={style.searchbar}>
-                        <input type="text" name="" placeholder="search" id="" />
+                    <input type="text" name="" placeholder="search" id="" onChange={handleSearch}/>
+                        {loader && <svg id="Loader_search" viewBox="25 25 50 50">
+                            <circle id="circle_line" r="20" cy="50" cx="50"></circle>
+                          </svg>}
                     </span>
                     <div className={style.advanced_search}>
                         <div className={style.quick_action}>
@@ -224,6 +245,10 @@ const Credits = () => {
               pointerOnHover
               selectableRowsHighlight
               fixedHeaderScrollHeight={`${code ? "50vh" : "79vh"}`}
+              paginationServer
+              paginationTotalRows={data?.count || 0}
+              onChangePage={(page) => setPage(page)}
+              onChangeRowsPerPage={(newPageSize) => setPageSize(newPageSize)}                
             ></DataTable>
             {code && 
             <>

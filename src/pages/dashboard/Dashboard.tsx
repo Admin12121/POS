@@ -19,7 +19,6 @@ const Dashboard = () => {
    const [sidebar, setSidebar] = useState(false);
    const { access_token,refresh_token } = getToken();
    const { data, refetch } = useGetLoggedUserQuery({access_token});
-   const [notifications, _setNotifications] = useState([]);
 
    const userData = data;
    const Refetch = refetch;
@@ -68,7 +67,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <Navbar user={data} bar={setSidebar} notifications={notifications} active={sidebar} />
+      <Navbar user={data} bar={setSidebar} active={sidebar} />
       <section className="main_container">
        {!shouldHideSidebar && <Sidebar  active={sidebar} user={data}/>}
         <div className="main_dashboard_wrapper" >
