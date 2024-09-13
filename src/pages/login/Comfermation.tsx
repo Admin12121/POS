@@ -1,24 +1,37 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from "react-router-dom";
 import { useResetPasswordMutation } from "@/fetch_Api/service/user_Auth_Api";
 import { toast } from 'sonner';
 import zxcvbn from 'zxcvbn';
 import './style.scss';
 import { BsExclamationCircleFill } from "react-icons/bs";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface ServerError {
   [key: string]: string[];
 }
 
-const Comfermation = () => {
+const schema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+  password2: z.string().min(8, "Confirm Password must be at least 8 characters long"),
+}).refine(data => data.password === data.password2, {
+  message: "Passwords don't match",
+  path: ["password2"],
+});
+
+const Comfermation = ({ email }: { email: string }) => {
   const navigate = useNavigate();
   const [server_error, setServerError] = useState<ServerError>({});
   const [server_msg, setServerMsg] = useState<any>({});
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
-  const { id, token } = useParams();
   const [sendPasswordResetEmail, { isLoading }] = useResetPasswordMutation();
   const prevStrength = useRef<number>(0);
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+  });
 
   const handlePasswordChange = (e: any) => {
     const password = e.target.value;
@@ -27,7 +40,7 @@ const Comfermation = () => {
   };
 
   useEffect(() => {
-    if (Object.keys(server_error).length > 0) {
+    if (server_error && Object.keys(server_error).length > 0) {
       const errorKey = Object.keys(server_error)[0];
       if (server_error[errorKey] && server_error[errorKey].length > 0) {
         const errorMessage = server_error[errorKey][0];
@@ -41,23 +54,30 @@ const Comfermation = () => {
     }
   }, [server_error]);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: any) => {
     if (passwordStrength < 3) {
       toast.error("Your password is too weak. Please choose a stronger password.");
       return;
     }
-
-    const data = new FormData(e.currentTarget);
+  
     const actualData = {
-      password: data.get('password'),
-      password2: data.get('password2'),
+      email: email,
+      password: data.password,
+      password2: data.password2,
     };
-    const res = await sendPasswordResetEmail({ actualData, id, token });
+    const res = await sendPasswordResetEmail({ actualData });
     if (res.error && 'data' in res.error && res.error.data) {
       setServerMsg({});
-      setServerError((res.error.data as any).errors);
+      const errors = (res.error.data as any).errors;
+      setServerError(errors);
+      if ((res.error.data as any)?.non_field_errors) {
+        toast.error((res.error.data as any).non_field_errors[0], {
+          action: {
+            label: 'X',
+            onClick: () => toast.dismiss(),
+          },
+        });
+      }
     }
     if (res.data) {
       setServerError({});
@@ -95,12 +115,12 @@ const Comfermation = () => {
   return (
     <div className="ResetPassword_wrapper">
       <div className="reset_wrapper">
-        <form className="form" id='password-reset-email-form' onSubmit={handleSubmit}>
+        <form className="form" id='password-reset-email-form' onSubmit={handleSubmit(onSubmit)}>
           <h2>Change Password</h2>
           <div className="flex-column">
             <label>Password</label>
           </div>
-          <div className={`inputForm ${server_error.non_field_errors || server_error.password ? "border-red-500" : server_msg.msg ? "border-green-500" : ""}`}>
+          <div className={`inputForm ${errors.password ? "border-red-500" : server_msg.msg ? "border-green-500" : ""}`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -114,31 +134,16 @@ const Comfermation = () => {
               placeholder="New Password"
               className="input"
               type="password"
-              name='password'
+              {...register('password')}
               required
               onChange={handlePasswordChange}
             />
           </div>
-            <div className='flex flex-col gap-1'>
-                <div className="password-strength flex space-x-1 mt-2">
-                  <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(0)}`}></div>
-                  <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(1)}`}></div>
-                  <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(2)}`}></div>
-                  <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(3)}`}></div>
-                </div>
-                <p className="strength-text mt-1 text-xs items-end w-full flex justify-end gap-1">
-                  {passwordStrength === 0 && "Very Weak"}
-                  {passwordStrength === 1 && "Weak"}
-                  {passwordStrength === 2 && "So-so"}
-                  {passwordStrength === 3 && "Good"}
-                  {passwordStrength === 4 && "Strong"}
-                  <BsExclamationCircleFill size={14}/>
-                </p>
-            </div>
+            {errors.password && <p className='text-red-500 text-sm'>{String(errors.password.message)}</p>}
           <div className="flex-column !w-full">
             <label>Confirm Password</label>
           </div>
-          <div className={`inputForm ${server_error.non_field_errors || server_error.password ? "border-red-500" : server_msg.msg ? "border-green-500" : ""}`}>
+          <div className={`inputForm ${errors.password2 ? "border-red-500" : server_msg.msg ? "border-green-500" : ""}`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -152,11 +157,28 @@ const Comfermation = () => {
               placeholder="Confirm Password"
               className="input"
               type="password"
-              name='password2'
+              {...register('password2')}
               required
             />
           </div>
-          {isLoading ? <button disabled style={{ background: '#151717f2' }} className="button-submit"><svg className="svg_loader" viewBox="25 25 50 50"><circle className="svgcircle" r="20" cy="50" cx="50"></circle></svg></button> : <button className="button-submit" type="submit">Reset Password</button>}
+            {errors.password2 && <p className='text-red-500 text-sm'>{String(errors.password2.message)}</p>}
+          <div className='flex flex-col gap-1'>
+            <div className="password-strength flex space-x-1 mt-2">
+              <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(0)}`}></div>
+              <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(1)}`}></div>
+              <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(2)}`}></div>
+              <div className={`h-1 flex-1 rounded-md strength-bar ${getBarClass(3)}`}></div>
+            </div>
+            <p className="strength-text mt-1 text-xs items-end w-full flex justify-end gap-1">
+              {passwordStrength === 0 && "Very Weak"}
+              {passwordStrength === 1 && "Weak"}
+              {passwordStrength === 2 && "So-so"}
+              {passwordStrength === 3 && "Good"}
+              {passwordStrength === 4 && "Strong"}
+              <BsExclamationCircleFill size={14} />
+            </p>
+          </div>
+          {isLoading ? <button disabled style={{ background: '#151717f2' }} className="button-submit"><svg className="svg_loader" viewBox="25 25 50 50"><circle className="svgcircle" r="20" cy="50"></circle></svg></button> : <button className="button-submit" type="submit">Reset Password</button>}
         </form>
         <div className="auth-footer">
           <p>

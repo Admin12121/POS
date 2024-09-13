@@ -3,7 +3,7 @@ import { useDashboardData } from "@/pages/dashboard/Dashboard";
 import {
   useUpdateUserProfileMutation,
   useChangeUserPasswordMutation,
-  useTwoFaMutation
+  useTwoFaMutation,
 } from "@/fetch_Api/service/user_Auth_Api";
 import { toast } from "sonner";
 import "./style.scss";
@@ -21,12 +21,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { useForm , Controller} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDropzone } from "react-dropzone";
 import zxcvbn from "zxcvbn";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MdOutlineEdit } from "react-icons/md";
+import { IoCloudUploadOutline } from "react-icons/io5";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -85,7 +86,6 @@ const passwordSchema = z
     path: ["confirmPassword"],
   });
 
-
 const twoFaSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
@@ -94,17 +94,19 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
 type TwoFaFormData = z.infer<typeof twoFaSchema>;
 
-
 const Profile = () => {
-  const { userData , Refetch} = useDashboardData();
+  const { userData, Refetch } = useDashboardData();
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [User, setUser] = useState<User | null>(null);
   const [first_last, setFirstLast] = useState({ first: "", last: "" });
   const [previewImage, setPreviewImage] = useState("");
   const [logfile, setLogFile] = useState<File | null>(null);
   const [isFormChanged, setIsFormChanged] = useState(false);
-  const [UpdateProfile, {isLoading: isLoadingProfile}] = useUpdateUserProfileMutation();
-  const [ChangePassword, {isLoading: isLoadingPassword}] = useChangeUserPasswordMutation();
-  const [TwoFaUpdate, {isLoading: isLoadingTwoFa}] = useTwoFaMutation();
+  const [UpdateProfile, { isLoading: isLoadingProfile }] =
+    useUpdateUserProfileMutation();
+  const [ChangePassword, { isLoading: isLoadingPassword }] =
+    useChangeUserPasswordMutation();
+  const [TwoFaUpdate, { isLoading: isLoadingTwoFa }] = useTwoFaMutation();
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const prevStrength = useRef<number>(0);
   const [twofaerror, setTwoFaError] = useState<string>("");
@@ -193,7 +195,7 @@ const Profile = () => {
         },
       });
     }
-  }
+  };
 
   const handleProfileUpdate = async (data: ProfileFormData) => {
     if (User) {
@@ -284,6 +286,9 @@ const Profile = () => {
   };
 
   const handleCancel = () => {
+    setIsEditingProfile(false);
+    setPreviewImage("");
+    setLogFile(null);
     if (userData) {
       resetProfileForm({
         first_name: userData.first_name,
@@ -295,17 +300,23 @@ const Profile = () => {
     }
   };
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    setLogFile(file);
-    setPreviewImage(URL.createObjectURL(file));
-    setIsFormChanged(true);
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (isEditingProfile) {
+        const file = acceptedFiles[0];
+        setLogFile(file);
+        setPreviewImage(URL.createObjectURL(file));
+        setIsFormChanged(true);
+      }
+    },
+    [isEditingProfile]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { "image/*": [] },
     multiple: false,
+    noClick: !isEditingProfile,
   });
 
   const handleDialogOpenChange = (isOpen: boolean) => {
@@ -335,7 +346,6 @@ const Profile = () => {
       setPasswordStrength(result.score);
     }
   }, [newPassword]);
-  
 
   return (
     <>
@@ -348,30 +358,71 @@ const Profile = () => {
           className="form_wrapper"
           onSubmit={handleProfileSubmit(handleProfileUpdate)}
         >
-          <div className="profile-picture_" {...getRootProps()}>
-            <input {...getInputProps()} />
-            <span className="user_details">
-              <Avatar className="!w-20 !h-20 !border-primary">
-                <AvatarImage
-                  className="!w-full !h-full !relative"
-                  src={previewImage || (userData && User && User.profile)}
-                  alt={`@${userData && User && User.name}`}
-                />
-                <AvatarFallback>
-                  {userData &&
-                    User &&
-                    `${User.first_name.charAt(0)}${User.last_name.charAt(0)}`}
-                </AvatarFallback>
-              </Avatar>
-              <MdOutlineEdit size={20} className="absolute bottom-0 left-16" />
-              <span className="profile_text_">
-                <h2 className="text-sm font-bold">
-                  {userData && User && first_last.first + " " + first_last.last}
-                </h2>
-                <p>Updates Your Photo and Personal Details</p>
-              </span>
-            </span>
-          </div>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <div className="profile-picture_" {...getRootProps()}>
+                <input {...getInputProps()} />
+                <span className="user_details">
+                  <Avatar className="!w-20 !h-20 !border-primary">
+                    <AvatarImage
+                      className="!w-full !h-full !relative"
+                      src={previewImage || (userData && User && User.profile)}
+                      alt={`@${userData && User && User.name}`}
+                    />
+                    <AvatarFallback>
+                      {userData && User && `${User.first_name.charAt(0)}${User.last_name.charAt(0).toUpperCase()}`}
+                    </AvatarFallback>
+                  </Avatar>
+                  {isEditingProfile ? (
+                    <IoCloudUploadOutline
+                      size={20}
+                      className="absolute bottom-0 left-16"
+                    />
+                  ) : (
+                    <MdOutlineEdit
+                      size={20}
+                      className="absolute bottom-0 left-16"
+                      onClick={() => setIsEditingProfile(true)}
+                    />
+                  )}
+                  <span className="profile_text_">
+                    <h2 className="text-sm font-bold">
+                      {userData &&
+                        User &&
+                        first_last.first + " " + first_last.last}
+                    </h2>
+                    <p>Updates Your Photo and Personal Details</p>
+                  </span>
+                </span>
+              </div>
+            </AlertDialogTrigger>
+            {!isEditingProfile && (
+              <AlertDialogContent className="w-[300px]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Current Profile</AlertDialogTitle>
+                  <AlertDialogDescription className="flex justify-center items-center">
+                    <Avatar className="!w-20 !h-20 !border-primary">
+                      <AvatarImage
+                        className="!w-full !h-full !relative object-cover"
+                        src={previewImage || (userData && User && User.profile)}
+                        alt={`@${userData && User && User.name}`}
+                      />
+                      <AvatarFallback>
+                        {userData &&
+                          User &&
+                          `${User.first_name.charAt(0)}${User.last_name.charAt(
+                            0
+                          )}`}
+                      </AvatarFallback>
+                    </Avatar>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Close</AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            )}
+          </AlertDialog>
           <div className="form-wrapper">
             <div className="flex-row">
               <div className="flex-column">
@@ -488,7 +539,7 @@ const Profile = () => {
                     {profileErrors.gender.message}
                   </span>
                 )}
-              </div>              
+              </div>
               <div className="flex-column">
                 <label>Date of Birth:</label>
                 <div className="inputForm">
@@ -511,44 +562,62 @@ const Profile = () => {
             <div className="flex-row" style={{ padding: "20px 5px" }}>
               <AlertDialog onOpenChange={handleTwoFaOpenChange}>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline">{User?.is_enable ? "Disable 2FA": "Enable 2FA"}</Button>
+                  <Button variant="outline">
+                    {User?.is_enable ? "Disable 2FA" : "Enable 2FA"}
+                  </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      {User?.is_enable ? "Disable 2FA": "Enable 2FA"}
+                      {User?.is_enable ? "Disable 2FA" : "Enable 2FA"}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      {User?.is_enable ? "Are you sure you want to disable 2FA?": "Are you sure you want to enable 2FA?"}
-                        <div className="inputForm" style={{border: `${twofaerror ? "1px solid red" : ""}`}}>
-                          <input
-                            type="password"
-                            className="input"
-                            {...twoFaRegister("password")}
-                            placeholder="Password"
-                            onChange={handleInputChange}
-                            required
-                          />
-                        </div>
-                        {twofaerror && (
-                          <span className="text-red-500">
-                            {twofaerror}
-                          </span>
-                        )}
-                        {profileErrors.first_name && (
-                          <span className="text-red-500">
-                            {profileErrors.first_name.message}
-                          </span>
-                        )}
+                      {User?.is_enable
+                        ? "Are you sure you want to disable 2FA?"
+                        : "Are you sure you want to enable 2FA?"}
+                      <div
+                        className="inputForm"
+                        style={{
+                          border: `${twofaerror ? "1px solid red" : ""}`,
+                        }}
+                      >
+                        <input
+                          type="password"
+                          className="input"
+                          {...twoFaRegister("password")}
+                          placeholder="Password"
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      {twofaerror && (
+                        <span className="text-red-500">{twofaerror}</span>
+                      )}
+                      {profileErrors.first_name && (
+                        <span className="text-red-500">
+                          {profileErrors.first_name.message}
+                        </span>
+                      )}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel ref={alertDialogCancelRef}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleTwoFaSubmit(handleTwoFaUpdate)} loading={isLoadingTwoFa}>{User?.is_enable ? "Disable": "Enable"}</AlertDialogAction>
+                    <AlertDialogCancel ref={alertDialogCancelRef}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleTwoFaSubmit(handleTwoFaUpdate)}
+                      loading={isLoadingTwoFa}
+                    >
+                      {User?.is_enable ? "Disable" : "Enable"}
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button loading={isLoadingProfile} type="submit" disabled={!isFormChanged}>
+              <Button
+                loading={isLoadingProfile}
+                type="submit"
+                disabled={!isFormChanged}
+              >
                 Submit
               </Button>
               <span className="cursor-pointer" onClick={handleCancel}>
@@ -644,12 +713,18 @@ const Profile = () => {
                 </p>
               </div>
               <DialogFooter>
-                  <DialogClose asChild >
-                    <Button ref={dialogCancelRef} type="button" variant="secondary">
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                <Button type="submit" loading={isLoadingPassword}>Change Password</Button>
+                <DialogClose asChild>
+                  <Button
+                    ref={dialogCancelRef}
+                    type="button"
+                    variant="secondary"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" loading={isLoadingPassword}>
+                  Change Password
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>

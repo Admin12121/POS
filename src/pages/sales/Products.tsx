@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useProductsViewQuery } from "@/fetch_Api/service/user_Auth_Api";
+import { usePosProductsViewQuery } from "@/fetch_Api/service/user_Auth_Api";
 import { useDashboardData } from '@/pages/dashboard/Dashboard';
 import { toast } from 'sonner';
 
@@ -63,7 +63,7 @@ const Products = ({ category, selectedItems, setSelectedItems }:{category:string
   const [page, _setPage] = useState<number>(1);
   const [search, _setSearch] = useState<string>("");
   const [pageSize, _setPageSize] = useState<number>(10);
-  const { data, refetch } = useProductsViewQuery({ storeCode, category, page, search, pageSize},{skip: !storeCode});
+  const { data, refetch } = usePosProductsViewQuery({ storeCode, category, page, search, pageSize},{skip: !storeCode});
   const [storeData, setStoreData] = useState<Product []>();
   const [buttonStates, setButtonStates] = useState<boolean[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);

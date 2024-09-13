@@ -49,7 +49,7 @@ const Login = () => {
         const now = new Date();
         const otpDate = new Date(otpTime);
         const timeDifference =
-          otpDate.getTime() + 10 * 60 * 1000 - now.getTime();
+          otpDate.getTime() + 2 * 60 * 1000 - now.getTime();
 
         if (timeDifference > 0) {
           const minutes = Math.floor(
@@ -90,6 +90,9 @@ const Login = () => {
           navigate(`/accounts/activate/${email}`);
         } else {
           setOtpSent(true);
+          console.log(response.data)
+          setOtpTime((response.data as any).otp_time);
+          setOtpExpired(false);
         }
       }
       if (response.error) {
@@ -115,6 +118,15 @@ const Login = () => {
         password: data.get("password"),
       };
     } else {
+      if (value.length !== 6) {
+        toast.error("OTP is Invalid", {
+          action: {
+            label: "X",
+            onClick: () => toast.dismiss(),
+          },
+        });
+        return;
+      }
       actualData = {
         email_or_username: otpUser,
         otp: value,
@@ -389,7 +401,7 @@ const OTP = ({
               ) : (
                 <span
                   className="text-orange-500 cursor-pointer"
-                  onClick={handleResendOtp}
+                  onClick={() => handleResendOtp(user as string)}
                 >
                   {otpSent ? "Resend" : "Send"}{" "}
                   {otpExpired && otpTime ? (
@@ -401,7 +413,7 @@ const OTP = ({
               )}
             </span>
             <Button
-              disabled={isLoginLoading || isResendLoading}
+              disabled={isLoginLoading || isResendLoading || otpExpired}
               type="submit"
               className="w-full"
             >

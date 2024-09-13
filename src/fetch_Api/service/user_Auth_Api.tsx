@@ -166,9 +166,9 @@ export const userAuthapi = createApi({
       },
     }),
     resetPassword: builder.mutation({
-      query: ({ actualData, id, token }) => {
+      query: ({ actualData}) => {
         return {
-          url: `accounts/reset-password/${id}/${token}/`,
+          url: `accounts/reset-password/`,
           method: "POST",
           body: actualData,
           headers: {
@@ -257,6 +257,18 @@ export const userAuthapi = createApi({
         const { access_token } = getToken();
         return {
           url: `products/updateproducts/${storeCode}/${id}/`,
+          method: "GET",
+          headers: {
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
+    }),
+    posProductsView: builder.query({
+      query: ({storeCode, page, search, pageSize, category}) => {
+        const { access_token } = getToken();
+        return {
+          url: `products/products/${storeCode}/pos/${page ? `?page=${page}` : ""}${pageSize ? `&page_size=${pageSize}` : ""}${search ? `&search=${search}` : ""}${category && category != "All products" ? `&category=${category}` : ""}`,
           method: "GET",
           headers: {
             authorization: `Bearer ${access_token}`,
@@ -786,6 +798,7 @@ export const {
   useProductsRegistrationMutation,
   useUpdateProductsMutation,
   useGetupdateproductsViewQuery,
+  usePosProductsViewQuery,
   useProductsViewQuery,
   useLowstockproductsViewQuery,
   useUpdatelowstockproductsMutation,

@@ -43,7 +43,7 @@ const Otp = () => {
         const now = new Date();
         const otpDate = new Date(otpTime);
         const timeDifference =
-          otpDate.getTime() + 10 * 60 * 1000 - now.getTime();
+          otpDate.getTime() + 2 * 60 * 1000 - now.getTime();
 
         if (timeDifference > 0) {
           const minutes = Math.floor(

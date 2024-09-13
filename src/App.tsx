@@ -15,7 +15,6 @@ import Brand from "@/pages/Inventory/Brand";
 import Customer from "@/pages/people/Customer";
 import Employee from "@/pages/people/Employee";
 import Register_Employee from "@/pages/people/Register_Employee";
-import Comfermation from "@/pages/login/Comfermation";
 import Staff_Dashboard from "@/pages/dashboard/Staff/Staff_Dashboard";
 import Product_view from "@/pages/Inventory/Product_view";
 import UpdateProduct from "@/pages/Inventory/UpdateProduct";
@@ -55,7 +54,6 @@ const App = () => {
          <Route path="login" element={ !access_token ? <Suspense fallback={<Loader/>}><Login /></Suspense> : <Navigate to="/" />}/>
          <Route path="signin" element={!access_token ? <Suspense fallback={<Loader/>}><Signin /></Suspense>: <Navigate to="/" />}/>
          <Route path="/accounts/activate/:email" element={!access_token ? <Suspense fallback={<Loader/>}><Otp/></Suspense> : <Navigate to="/" />}/>
-         <Route path="api/user/reset/:id/:token" element={!access_token ? <Comfermation/> : <Navigate to="/" />}/>
          <Route path="forgot-password" element={!access_token ? <Suspense fallback={<Loader/>}><Resetpassword/></Suspense>: <Navigate to="/" />}/>
          <Route path="/" element={access_token ? <Dashboard/> : <Navigate to="/login" />} >
            <Route index element={ <Suspense fallback={<Loader login={access_token}/>}><Admin_Dashboard/></Suspense>}/>
