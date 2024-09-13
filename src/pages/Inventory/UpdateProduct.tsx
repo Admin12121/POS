@@ -611,7 +611,6 @@ const UpdateProduct = () => {
                   {selectedVariants.length > 0 && <table className="table-borderlesss w-100 table-fit">
                       <thead>
                         <tr>
-                          <th>Variantion</th>
                           {selectedVariants.map(variant => (
                             <th key={variant}>{variant}</th>
                           ))}
@@ -624,15 +623,6 @@ const UpdateProduct = () => {
                       <tbody>
                         {rows.map((row, index) => (
                         <tr key={index}>
-                          <td>
-                            <div className="flex-column">
-                              <div className="inputForm">
-                                <input type="text" className="input" name="variantion" value={row.variantion} placeholder="Variantion" />
-                              </div>
-                                <div style={{height:"42px"}}>
-                                </div>
-                            </div>
-                          </td>
                           {selectedVariants.map(variant => (
                             <td key={variant}>
                               <div className="flex-column">

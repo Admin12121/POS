@@ -288,6 +288,32 @@ export const userAuthapi = createApi({
         };
       },
     }),
+    productImage: builder.mutation({
+      query: ({formData, storeCode}) => {
+        const { access_token } = getToken();
+        return {
+          url: `products/productimage/${storeCode}/pos/`,
+          method: "POST",
+          body: formData,
+          headers: {  
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
+    }),
+    updateproductImage: builder.mutation({
+      query: ({formData, storeCode, id}) => {
+        const { access_token } = getToken();
+        return {
+          url: `products/productimage/${storeCode}/pos/${id ? `?id=${id}` : ""}`,
+          method: "PATCH",
+          body: formData,
+          headers: {  
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
+    }),
     lowstockproductsView: builder.query({
       query: ({storeCode}) => {
         const { access_token } = getToken();
