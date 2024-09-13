@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -101,13 +102,14 @@ const Profile = () => {
   const [previewImage, setPreviewImage] = useState("");
   const [logfile, setLogFile] = useState<File | null>(null);
   const [isFormChanged, setIsFormChanged] = useState(false);
-  const [UpdateProfile] = useUpdateUserProfileMutation();
-  const [ChangePassword] = useChangeUserPasswordMutation();
-  const [TwoFaUpdate] = useTwoFaMutation();
+  const [UpdateProfile, {isLoading: isLoadingProfile}] = useUpdateUserProfileMutation();
+  const [ChangePassword, {isLoading: isLoadingPassword}] = useChangeUserPasswordMutation();
+  const [TwoFaUpdate, {isLoading: isLoadingTwoFa}] = useTwoFaMutation();
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const prevStrength = useRef<number>(0);
   const [twofaerror, setTwoFaError] = useState<string>("");
   const alertDialogCancelRef = useRef<HTMLButtonElement>(null);
+  const dialogCancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (userData) {
@@ -267,7 +269,7 @@ const Profile = () => {
         },
       });
       resetPasswordForm();
-      (document.querySelector(".dialog-overlay") as HTMLElement)?.click();
+      dialogCancelRef.current?.click();
     } else if (res.error) {
       const errorMessage =
         (res.error as any).data?.errors?.non_field_errors?.[0] ||
@@ -542,11 +544,11 @@ const Profile = () => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel ref={alertDialogCancelRef}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleTwoFaSubmit(handleTwoFaUpdate)}>{User?.is_enable ? "Disable": "Enable"}</AlertDialogAction>
+                    <AlertDialogAction onClick={handleTwoFaSubmit(handleTwoFaUpdate)} loading={isLoadingTwoFa}>{User?.is_enable ? "Disable": "Enable"}</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button type="submit" disabled={!isFormChanged}>
+              <Button loading={isLoadingProfile} type="submit" disabled={!isFormChanged}>
                 Submit
               </Button>
               <span className="cursor-pointer" onClick={handleCancel}>
@@ -642,7 +644,12 @@ const Profile = () => {
                 </p>
               </div>
               <DialogFooter>
-                <Button type="submit">Change Password</Button>
+                  <DialogClose asChild >
+                    <Button ref={dialogCancelRef} type="button" variant="secondary">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                <Button type="submit" loading={isLoadingPassword}>Change Password</Button>
               </DialogFooter>
             </form>
           </DialogContent>

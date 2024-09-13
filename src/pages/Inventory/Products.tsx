@@ -213,7 +213,7 @@ const Products = () => {
           createdby: (
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Avatar className="w-10 h-10 rounded-md">
-                    <AvatarImage src={profile || ""} alt={createdby} />
+                    <AvatarImage src={profile || ""} alt={createdby}  className="object-cover"/>
                     <AvatarFallback>{createdby.charAt(0)}</AvatarFallback>
                   </Avatar>
               <p>{createdby}</p>
