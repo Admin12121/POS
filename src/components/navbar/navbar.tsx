@@ -82,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({user, bar, active}) => {
 
   useEffect(() => {
     const socket = new WebSocket(
-      `ws://localhost:8000/ws/notifications/?token=${access_token}`
+      `${import.meta.env.VITE_KEY_WS_DOMAIN}/notifications/?token=${access_token}`
     );
     socket.onopen = () => {
       console.log('WebSocket connection opened');
@@ -187,7 +187,7 @@ const Navbar: React.FC<NavbarProps> = ({user, bar, active}) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={()=>navigate("/profile")}>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Setting</DropdownMenuItem>
+              <DropdownMenuItem onClick={()=>navigate("/settings")}>Setting</DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-200 cursor-pointer">Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

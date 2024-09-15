@@ -1,17 +1,10 @@
-import {useState, useEffect,useRef} from 'react'
+import {useEffect,useRef} from 'react'
 import "./style.scss"
-import { useDashboardData } from '@/pages/dashboard/Dashboard';
 import {useDailyInvoiceDataQuery} from  "@/fetch_Api/service/user_Auth_Api"
 import DataTable from 'react-data-table-component';
 import moment from 'moment';
-const View_invoice = ({setInvoicereport}:any) => {
-  const { userData } = useDashboardData(); 
-  const [storeCode, setStoreCode]  = useState("");  
-  useEffect(()=>{
-    if(userData){
-      setStoreCode(userData.stor.code)
-    }
-  },[userData])
+const View_invoice = ({setInvoicereport, storeCode}:any) => {
+
   const {data,} = useDailyInvoiceDataQuery(storeCode);
   const columns = [
     {

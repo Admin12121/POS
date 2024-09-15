@@ -301,13 +301,25 @@ export const userAuthapi = createApi({
         };
       },
     }),
-    updateproductImage: builder.mutation({
-      query: ({formData, storeCode, id}) => {
+    createproductImage: builder.mutation({
+      query: ({formData, storeCode}) => {
         const { access_token } = getToken();
         return {
-          url: `products/productimage/${storeCode}/pos/${id ? `?id=${id}` : ""}`,
-          method: "PATCH",
+          url: `products/productimage/${storeCode}/pos/`,
+          method: "POST",
           body: formData,
+          headers: {  
+            authorization: `Bearer ${access_token}`,
+          },
+        };
+      },
+    }),
+    deleteproductImage: builder.mutation({
+      query: ({ storeCode, id }) => {
+        const { access_token } = getToken();
+        return {
+          url: `products/productimage/${storeCode}/pos/${id}/`,
+          method: "DELETE",
           headers: {  
             authorization: `Bearer ${access_token}`,
           },
@@ -823,9 +835,11 @@ export const {
   useGetStaffUserQuery,
   useProductsRegistrationMutation,
   useUpdateProductsMutation,
+  useCreateproductImageMutation,
   useGetupdateproductsViewQuery,
   usePosProductsViewQuery,
   useProductsViewQuery,
+  useDeleteproductImageMutation,
   useLowstockproductsViewQuery,
   useUpdatelowstockproductsMutation,
   useExpiredproductsViewQuery,

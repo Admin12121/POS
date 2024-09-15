@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.8",
     "@hookform/resolvers": "^3.9.0",
     "@nextui-org/spinner": "^2.0.33",
     "@radix-ui/react-accordion": "^1.2.0",

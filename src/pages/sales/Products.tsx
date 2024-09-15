@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePosProductsViewQuery } from "@/fetch_Api/service/user_Auth_Api";
-import { useDashboardData } from '@/pages/dashboard/Dashboard';
 import { toast } from 'sonner';
 
 interface Product {
@@ -57,9 +56,8 @@ interface VariantDetail {
   name: string;
 }
 
-const Products = ({ category, selectedItems, setSelectedItems }:{category:string, selectedItems:any, setSelectedItems:any}) => {
-  const { userData } = useDashboardData();
-  const [storeCode, setStoreCode] = useState("");
+const Products = ({ category, selectedItems, setSelectedItems, storeCode }:{category:string, selectedItems:any, setSelectedItems:any, storeCode:string}) => {
+
   const [page, _setPage] = useState<number>(1);
   const [search, _setSearch] = useState<string>("");
   const [pageSize, _setPageSize] = useState<number>(10);
@@ -67,12 +65,6 @@ const Products = ({ category, selectedItems, setSelectedItems }:{category:string
   const [storeData, setStoreData] = useState<Product []>();
   const [buttonStates, setButtonStates] = useState<boolean[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (userData) {
-      setStoreCode(userData.stor.code);
-    }
-  }, [userData]);
 
   useEffect(() => {
     if (category) {

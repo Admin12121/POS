@@ -1,8 +1,7 @@
 import { useState,useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useDashboardData } from '@/pages/dashboard/Dashboard';
 // import {useCategoryViewQuery, useRedeemCodeViewMutation, useAddInvoiceMutation,useAddcustomerMutation} from  "../../Fetch_Api/Service/User_Auth_Api"
-import {useCategoryViewQuery, useAddInvoiceMutation,useAddcustomerMutation} from  "@/fetch_Api/service/user_Auth_Api"
+import { useCategoryViewQuery, useGetLoggedUserQuery, useAddInvoiceMutation, useAddcustomerMutation} from  "@/fetch_Api/service/user_Auth_Api"
 import {toast } from 'sonner';
 import './style.scss'
 import "swiper/css";
@@ -17,6 +16,8 @@ import { LuRefreshCw } from "react-icons/lu";
 import { SlCreditCard } from "react-icons/sl";
 import { BsCash } from "react-icons/bs";
 import { MdQrCode2 } from "react-icons/md";
+import { getToken } from '@/fetch_Api/service/localStorageServices';
+
 
 interface BillUserDetails {
     user: {
@@ -36,7 +37,8 @@ interface BillUserDetails {
   }
 
 const POS = () => {
-    const { userData } = useDashboardData();
+    const { access_token } = getToken();
+    const { data : userData } = useGetLoggedUserQuery({access_token},{skip: !access_token});
     const [storeCode, setStoreCode] = useState<string>("");
     const { data } = useCategoryViewQuery({storeCode, page: 1, pageSize: 100},{skip: !storeCode});
     const [_cate, setCate] = useState<string>("All products");
@@ -219,7 +221,7 @@ const POS = () => {
     
   return (
     <>
-    <div className="pos">
+    <div className="pos overflow-hidden overflow-y-auto h-screen">
     <div className="header_button_wrapper">
             <span className="action_button" onClick={()=>setHoldInvoicereport(true)}>
                <LuShoppingCart size={15}/>
@@ -255,7 +257,7 @@ const POS = () => {
                         ))}
                     </Swiper>
                 </div>
-                <Products category={cateslug} selectedItems={selectedItems} setSelectedItems={setSelectedItems}/>
+                <Products storeCode={storeCode} category={cateslug} selectedItems={selectedItems} setSelectedItems={setSelectedItems}/>
             </div>
             <form onSubmit={Handel_Submit_} className="item">
                 <OrderList add={add} setAdd={setAdd} billUserdetails={billUserdetails} setBillUserdetails={setBillUserdetails} pcs={pcs} setPcs={setPcs} selectedItems={selectedItems} storeCode={storeCode} setSelectedItems={setSelectedItems}/>
@@ -357,9 +359,9 @@ const POS = () => {
          {payment_form && <Order_submitted status={status} setBillDetails={setBillDetails} setBillUserdetails={setBillUserdetails} setInvoicenum={setInvoicenum} setBillUser={setBillUser} setInvoice={setInvoice} payment_form={payment_form} setPayment_form={setPayment_form}/>}
         {invoice && <Recipt  due={due} invoicenum={invoicenum} billUserdetails={billUserdetails} billUser={billUser} billDetails={billDetails} setInvoice={setInvoice}/>}
     </div>
-    {add && <CustomerAdd add={add} setAdd={setAdd}/>}
-    {invoiceReport && <View_invoice setInvoicereport={setInvoicereport}/>}
-    {holdinvoiceReport && <On_Hold setHoldInvoicereport={setHoldInvoicereport}/>}
+    {add && <CustomerAdd storeCode={storeCode} add={add} setAdd={setAdd}/>}
+    {invoiceReport && <View_invoice storeCode={storeCode} setInvoicereport={setInvoicereport}/>}
+    {holdinvoiceReport && <On_Hold storeCode={storeCode} setHoldInvoicereport={setHoldInvoicereport}/>}
     </>
   )
 }
@@ -566,9 +568,8 @@ const Recipt = ({ due, invoicenum, billDetails, billUser, billUserdetails}: Reci
     )
 }
 
-const CustomerAdd = ({add,setAdd}:{add:boolean, setAdd:any})  => {
-    const { userData } = useDashboardData();
-    const [storeCode, setStoreCode]  = useState("")
+const CustomerAdd = ({add,setAdd, storeCode}:{add:boolean, setAdd:any, storeCode:string})  => {
+
     const [ AddCustomer ] = useAddcustomerMutation();
     const cusomerRef = useRef<HTMLFormElement>(null);
 
@@ -585,11 +586,6 @@ const CustomerAdd = ({add,setAdd}:{add:boolean, setAdd:any})  => {
     }
   };
   
-    useEffect(()=>{
-        if(userData){
-          setStoreCode(userData.stor.code)
-        }
-      },[userData])
     const handelSubmit = async (e:any) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);

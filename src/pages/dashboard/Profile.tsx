@@ -94,7 +94,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
 type TwoFaFormData = z.infer<typeof twoFaSchema>;
 
-const Profile = () => {
+const UserProfile = () => {
   const { userData, Refetch } = useDashboardData();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [User, setUser] = useState<User | null>(null);
@@ -734,4 +734,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default UserProfile;
