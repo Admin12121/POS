@@ -24,7 +24,7 @@ import Credits from "@/pages/Invoice/Credits";
 import Otp from "@/pages/login/otp";
 import UserProfile  from "@/pages/dashboard/Profile"
 
-import Profile from '@/pages/forms/profile-form';
+import ProfileForm from '@/pages/forms/profile-form';
 import SettingsAccountPage from '@/pages/forms/account/page';
 import SettingsAppearancePage from '@/pages/forms/appearance/page';
 import SettingsDisplayPage from '@/pages/forms/display/page';
@@ -74,7 +74,7 @@ const App = () => {
         <Route path="invoice_report" element={<Invoice_report />} />
         <Route path="credit-details" element={<Credits />} />
         <Route path="settings" element={<Suspense fallback={<Loader login={access_token}/>}><Layout/></Suspense>}>
-          <Route index element={<Profile/>}/>
+          <Route index element={<ProfileForm/>}/>
           <Route path="account" element={<SettingsAccountPage/>}/>
           <Route path="appearance" element={<SettingsAppearancePage/>}/>
           <Route path="display" element={<SettingsDisplayPage/>}/>
